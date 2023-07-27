@@ -7,9 +7,10 @@
 
     "ace-forecast-2023": {
       "pageTitle": "ACE Forecast - Interactive",
+      "chartStylesheet": "ace-forecast-2023.css",
       "chartScript": "ace-forecast-2023.js",
       "chartTitle": "Accumulated Cyclone Energy (ACE) Forecast, 2023",
-      "chartSubtitle": "Forecast for accumulated cyclone energy (ACE) through the 2023 hurricane season"
+      "chartSubtitle": "Forecast for accumulated cyclone energy (ACE) in the North Atlantic through the 2023 hurricane season"
     }
 
   }

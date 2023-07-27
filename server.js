@@ -19,7 +19,7 @@ app.set('views', path.join(__dirname, '/views'));
 
 // Load chart data manifest for quick access
 const manifest = JSON.parse(
-    fs.readFileSync("static/json/manifest.json", "utf8")
+    fs.readFileSync("static/manifest.json", "utf8")
 );
 
 
@@ -61,6 +61,7 @@ app.get("/web/:chart", function (request, response) {
     // Render the web chart viewer template with the correct data
     response.render("chart", {
         chartPageTitle: chartData["pageTitle"],
+        chartStylesheet: chartData["chartStylesheet"],
         chartScript: chartData["chartScript"],
         chartTitle: chartData["chartTitle"],
         chartSubtitle: chartData["chartSubtitle"],

@@ -1,0 +1,59 @@
+
+
+.tick-y-cross {
+    stroke: lightgray;
+}
+
+.tick text {
+    font-size: 1.0rem;
+}
+
+.chart-data {
+    fill: none;
+    stroke-width: 1px;
+}
+
+#chart-data-historical {
+    stroke: darkcyan;
+}
+
+#chart-data-csu {
+    stroke: darkgreen;
+}
+
+#chart-data-actual {
+    stroke: #ea7c12;
+}
+
+#chart-data-prediction {
+    stroke: #ea7c12;
+    stroke-dasharray: 4px 3px;
+}
+
+#chart-data-median {
+    stroke: darkblue;
+}
+
+#chart-data-median-proj {
+    stroke: #5656b4;
+    stroke-dasharray: 4px 3px;
+}
+
+#chart-data-quartiles {
+    stroke: none;
+    fill: rgba(96, 96, 255, 0.4)
+}
+
+#chart-data-quartiles-proj {
+    stroke: none;
+    fill: rgba(223, 223, 255, 0.4)
+}
+
+#end-date-marker {
+    stroke: darkgray;
+}
+
+#past-date-shading {
+    stroke: none;
+    fill: rgb(247 247 247 / 80%);
+}
