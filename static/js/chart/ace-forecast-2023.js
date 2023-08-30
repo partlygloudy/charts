@@ -42,10 +42,10 @@ function buildChart(data) {
     const height = 600;
 
     // Empty space on each side of chart (inside svg area)
-    const paddingTop = 50;
+    const paddingTop = 60;
     const paddingRight = 10;
-    const paddingBottom = 20;
-    const paddingLeft = 30;
+    const paddingBottom = 30;
+    const paddingLeft = 40;
 
     // Domain (min, max values) of the data along each axis
     const domainX = [parseTime("7/6/23"), parseTime("11/1/23")];
@@ -58,7 +58,8 @@ function buildChart(data) {
     // Create the svg
     const svg = d3.create("svg")
         .attr("viewBox", [0, 0, width, height])
-        .classed("svg-chart", true);
+        .classed("svg-chart", true)
+        .on("pointermove", pointerMoved);
 
     // Create scales for the x and y axes
     const xScale = d3.scaleTime().domain(domainX).range(rangeX);
@@ -95,10 +96,11 @@ function buildChart(data) {
         // Add label above Y axis
         .call(g => g.append("text")
             .attr("x", -paddingLeft)
-            .attr("y", 10)
+            .attr("y", 20)
             .attr("fill", "black")
             .attr("text-anchor", "start")
-            .text("↑ Accumulated Cyclone Energy"));
+            .text("↑ Accumulated Cyclone Energy")
+            .classed("y-axis-label", true));
 
     // Vertical line marking September 30
     svg.append("g")
@@ -217,9 +219,82 @@ function buildChart(data) {
         .attr("id", "chart-data-prediction")
 
 
+    // ----- INTERACTIVE ELEMENTS ----- //
+
+    const selectedDateLine = svg.append("g")
+        .append("line")
+        .attr("x1", xScale(latestDate))
+        .attr("y1", rangeY[0])
+        .attr("x2", xScale(latestDate))
+        .attr("y2", rangeY[1])
+        .attr("id", "selected-date-marker");
+
+
     // ----- EVENT HANDLING ------ //
 
+    // Update the selected date marker and tooltip data as cursor moves
 
+    let prevCursorMonth = undefined;
+    let prevCursorDay = undefined;
+    function pointerMoved(event) {
+
+        // Get x, y positions of the pointer
+        let [x, y] = d3.pointer(event);
+        x = Math.min(x, xScale.range()[1]);
+        x = Math.max(x, xScale.range()[0]);
+
+        // Truncate the time for this date
+        let cursorDate = xScale.invert(x);
+        let cursorMonth = cursorDate.getMonth();
+        let cursorDay = cursorDate.getDate();
+        cursorDate.setHours(0);
+        cursorDate.setMinutes(0);
+        cursorDate.setSeconds(0);
+        cursorDate.setMilliseconds(0);
+        x = xScale(cursorDate);
+
+        // Move current hovered date marker to the cursor's x position
+        selectedDateLine
+            .attr("x1", x)
+            .attr("x2", x);
+        
+        // If cursor date has changed, update tooltip
+        if (cursorMonth !== prevCursorMonth || cursorDay !== prevCursorDay) {
+
+            let dataForDate = undefined;
+
+            // Scan the CSV data until we find the right date
+            data.some(d => {
+                dataForDate = d;
+                return d.Date.getMonth() === cursorMonth && d.Date.getDate() === cursorDay;
+            });
+
+            // Update the data in the tooltip box
+            $("#tooltip-date").text(cursorDate.toLocaleString('default', {
+                month: 'long',
+                year: "numeric",
+                day: "numeric"
+            }));
+            $("#tooltip-text-val-hist").text(dataForDate["Historical"]);
+            $("#tooltip-text-val-csu").text(dataForDate["CSU-Model"]);
+
+            if (dataForDate["Actual"] != 0) {
+                $("#tooltip-text-val-actual").text(dataForDate["Actual"]);
+                $("#tooltip-text-val-proj").text(dataForDate["Predicted-Median"]);
+                $("#tooltip-text-val-iqr").text(`${dataForDate["Predicted-LQ"]} - ${dataForDate["Predicted-UQ"]}`);
+            } else {
+                $("#tooltip-text-val-actual").text("-");
+                $("#tooltip-text-val-proj").text(latestMedian);
+                $("#tooltip-text-val-iqr").text(`${latestLQ} - ${latestUQ}`);
+            }
+
+            // Record the cursor date to avoid scanning again on same date
+            prevCursorMonth = cursorMonth;
+            prevCursorDay = cursorDay;
+
+        }
+
+    }
 
     // ----- RETURN FINISHED CHART ----- //
 

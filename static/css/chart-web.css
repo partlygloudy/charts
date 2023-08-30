@@ -3,6 +3,7 @@
 
 html {
     font-family: monospace;
+    color: rgb(100, 100, 100);
     margin: 0;
     width: 100%;
     height: 100%;
@@ -11,7 +12,7 @@ html {
 body {
     margin: 0;
     width: 100%;
-    height: 100%;
+    min-height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -20,7 +21,7 @@ body {
 
 #content-wrapper {
     height: 100%;
-    width: 100%;
+    padding: 25px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -28,17 +29,15 @@ body {
 }
 
 #chart-wrapper {
-    height: 90%;
     max-width: 90%;
     display: flex;
     flex-direction: column;
-    padding: 20px 20px 30px 20px;
+    padding: 20px;
     box-sizing: border-box;
     box-shadow: rgba(0, 0, 0, 0.2) 0 0 3px;
 }
 
 #chart-header {
-    height: 15%;
     width: 100%;
     display: flex;
     flex-direction: row;
@@ -46,25 +45,72 @@ body {
 }
 
 #chart-title {
-    font-family: Cambria, serif;
+    font-family: 'Crimson Text', Cambria, serif;
     font-size: 2.0rem;
     margin: 0 0 7px 0;
+    padding-right: 40px;
 }
 
 #chart-subtitle {
-    font-family: Cambria, serif;
+    font-family: 'Crimson Text', Cambria, serif;
     font-size: 0.85rem;
     font-weight: normal;
     margin: 0 0 0 8px;
+    padding-right: 32px;
+}
+
+#chart-logo-text {
+    font-family: 'Crimson Text', Cambria, serif;
+    background: darkcyan;
+    color: white;
+    font-weight: lighter;
+    font-size: 1.0rem;
+    cursor: pointer;
+    margin:  0 0 auto 0;
+    padding: 5px 10px;
+    text-align: center;
 }
 
 #chart-body {
-    min-height: 70%;
     max-height: 85%;
+    margin: 25px 0 15px 0;
+    position: relative;
 }
 
 .svg-chart {
     max-height: 100%;
     max-width: 100%;
     width: 850px;
+}
+
+#chart-description {
+    font-family: 'Crimson Text', Cambria, serif;
+    font-size: 0.85rem;
+    width: 850px;
+    max-width: 100%;
+}
+
+#tooltip-box {
+    padding: 8px;
+    position: absolute;
+    bottom: 35px;
+    right: 15px;
+    background: white;
+    border: 1px solid rgb(100, 100, 100);
+    font-family: Arial, sans-serif;
+}
+
+#tooltip-date {
+    font-size: 0.75rem;
+    margin: 0 0 10px 0;
+}
+
+.tooltip-text {
+    font-size: 0.75rem;
+    margin: 5px 0;
+}
+
+.tooltip-text-label {
+    display: inline-block;
+    width: 70px;
 }

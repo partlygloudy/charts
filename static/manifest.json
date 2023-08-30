@@ -10,7 +10,8 @@
       "chartStylesheet": "ace-forecast-2023.css",
       "chartScript": "ace-forecast-2023.js",
       "chartTitle": "Accumulated Cyclone Energy (ACE) Forecast, 2023",
-      "chartSubtitle": "Forecast for accumulated cyclone energy (ACE) in the North Atlantic through the 2023 hurricane season"
+      "chartSubtitle": "Forecast for accumulated cyclone energy (ACE) in the North Atlantic through the 2023 hurricane season",
+      "chartDescription": "<p>Accumulated cyclone energy (ACE) measured values, historical averages, baseline forecast for 2023, and daily forecasts for 2023. Historical data and forecasts come from Colorado State University’s Tropical Meteorology Project. Daily forecasts are determined by interpolating CSU’s full-season forecast for each day, with interpolation based on historical trends for ACE as the season progresses. See <a href='https://blog.jakegloudemans.com/ace-forecast-2023'>this blog post</a> for a detailed explanation of this chart. </p><p>I built this interpolated forecast to generate daily predictions for this question in Metaculus’s quarterly forecasting tournament. The tournament ends on September 30th, which is why this date is of particular focus in this chart. There is no other meteorological significance of the September 30th cutoff.</p>"
     }
 
   }

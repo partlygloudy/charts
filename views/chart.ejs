@@ -23,6 +23,11 @@
     <script src="/static/js/chart-web.js"></script>
     <script src="/static/js/chart/<%= chartScript %>"></script>
 
+    <!-- Load Google fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700;1,400;1,700&amp;display=swap" rel="stylesheet">
+
 </head>
 
 <!-- Body -->
@@ -41,13 +46,25 @@
                 <h2 id="chart-subtitle"><%= chartSubtitle %></h2>
             </div>
 
+            <h2 id="chart-logo-text">Jake<br>Gloudemans</h2>
+
+
         </div>
 
         <!-- Chart body, generated with d3 in the browser -->
-        <div id="chart-body"></div>
+        <div id="chart-body">
+            <div id="tooltip-box">
+                <h3 id="tooltip-date">August 30, 2023</h3>
+                <p class="tooltip-text"><span class="tooltip-text-label">Hist. Avg:</span> <span id="tooltip-text-val-hist">26.7</span></p>
+                <p class="tooltip-text"><span class="tooltip-text-label">CSU Model:</span> <span id="tooltip-text-val-csu">42.4</span></p>
+                <p class="tooltip-text"><span class="tooltip-text-label">Actual:</span> <span id="tooltip-text-val-actual">29.6</span></p>
+                <p class="tooltip-text"><span class="tooltip-text-label">Sept. 31 Proj:</span> <span id="tooltip-text-val-proj">121.4</span></p>
+                <p class="tooltip-text"><span class="tooltip-text-label">Sept. 31 IQR:</span> <span id="tooltip-text-val-iqr">99.2 - 134.5</span></p>
+            </div>
+        </div>
 
         <!-- Optional text description to accompany the chart -->
-        <div id="chart-description"></div>
+        <div id="chart-description"><%- chartDescription %></div>
 
     </div>
 

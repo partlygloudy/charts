@@ -5,7 +5,11 @@
 }
 
 .tick text {
-    font-size: 1.0rem;
+    font-size: 1.2rem;
+}
+
+.y-axis-label {
+    font-size: 1.2rem;
 }
 
 .chart-data {
@@ -51,6 +55,11 @@
 
 #end-date-marker {
     stroke: darkgray;
+}
+
+#selected-date-marker {
+    stroke: darkgray;
+    stroke-dasharray: 4px 3px;
 }
 
 #past-date-shading {
