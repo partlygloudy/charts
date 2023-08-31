@@ -21,6 +21,7 @@ body {
 
 #content-wrapper {
     height: 100%;
+    max-width: 100%;
     padding: 25px;
     display: flex;
     flex-direction: column;
@@ -90,27 +91,4 @@ body {
     max-width: 100%;
 }
 
-#tooltip-box {
-    padding: 8px;
-    position: absolute;
-    bottom: 35px;
-    right: 15px;
-    background: white;
-    border: 1px solid rgb(100, 100, 100);
-    font-family: Arial, sans-serif;
-}
 
-#tooltip-date {
-    font-size: 0.75rem;
-    margin: 0 0 10px 0;
-}
-
-.tooltip-text {
-    font-size: 0.75rem;
-    margin: 5px 0;
-}
-
-.tooltip-text-label {
-    display: inline-block;
-    width: 70px;
-}

@@ -66,3 +66,61 @@
     stroke: none;
     fill: rgb(247 247 247 / 80%);
 }
+
+#tooltip-box {
+    padding: 6px;
+    position: absolute;
+    bottom: 30px;
+    right: 10px;
+    background: white;
+    border: 1px solid rgb(100, 100, 100);
+    font-family: Arial, sans-serif;
+}
+
+.tooltip-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.tooltip-icon {
+    width: 15px;
+    height: 0;
+    margin-right: 5px;
+}
+
+#tooltip-icon-hist {
+    border-bottom: 2px solid darkcyan;
+}
+
+#tooltip-icon-csu {
+    border-bottom: 2px solid darkgreen;
+}
+
+#tooltip-icon-actual {
+    border-bottom: 2px solid #ea7c12;
+}
+
+#tooltip-icon-proj {
+    border-bottom: 2px solid darkblue;
+}
+
+#tooltip-icon-iqr {
+    height: 10px;
+    background: rgba(96, 96, 255, 0.4);
+}
+
+#tooltip-date {
+    font-size: 0.75rem;
+    margin: 0 0 5px 0;
+}
+
+.tooltip-text {
+    font-size: 0.75rem;
+    margin: 3px 0;
+}
+
+.tooltip-text-label {
+    display: inline-block;
+    width: 60px;
+}

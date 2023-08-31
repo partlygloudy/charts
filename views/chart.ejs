@@ -10,6 +10,7 @@
 
     <!-- Meta tags -->
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- CSS stylesheet -->
     <link rel="stylesheet" href="/static/css/chart-web.css">
@@ -53,14 +54,38 @@
 
         <!-- Chart body, generated with d3 in the browser -->
         <div id="chart-body">
+
+            <!-- Tooltip box, overlayed on chart SVG -->
             <div id="tooltip-box">
                 <h3 id="tooltip-date">August 30, 2023</h3>
-                <p class="tooltip-text"><span class="tooltip-text-label">Hist. Avg:</span> <span id="tooltip-text-val-hist">26.7</span></p>
-                <p class="tooltip-text"><span class="tooltip-text-label">CSU Model:</span> <span id="tooltip-text-val-csu">42.4</span></p>
-                <p class="tooltip-text"><span class="tooltip-text-label">Actual:</span> <span id="tooltip-text-val-actual">29.6</span></p>
-                <p class="tooltip-text"><span class="tooltip-text-label">Sept. 31 Proj:</span> <span id="tooltip-text-val-proj">121.4</span></p>
-                <p class="tooltip-text"><span class="tooltip-text-label">Sept. 31 IQR:</span> <span id="tooltip-text-val-iqr">99.2 - 134.5</span></p>
+
+                <div class="tooltip-row">
+                    <div class="tooltip-icon" id="tooltip-icon-hist"></div>
+                    <p class="tooltip-text"><span class="tooltip-text-label">Hist. Avg:</span> <span id="tooltip-text-val-hist">26.7</span></p>
+                </div>
+
+                <div class="tooltip-row">
+                    <div class="tooltip-icon" id="tooltip-icon-csu"></div>
+                    <p class="tooltip-text"><span class="tooltip-text-label">CSU Model:</span> <span id="tooltip-text-val-csu">42.4</span></p>
+                </div>
+
+                <div class="tooltip-row">
+                    <div class="tooltip-icon" id="tooltip-icon-actual"></div>
+                    <p class="tooltip-text"><span class="tooltip-text-label">Actual:</span> <span id="tooltip-text-val-actual">29.6</span></p>
+                </div>
+
+                <div class="tooltip-row">
+                    <div class="tooltip-icon" id="tooltip-icon-proj"></div>
+                    <p class="tooltip-text"><span class="tooltip-text-label">9/31 Proj:</span> <span id="tooltip-text-val-proj">121.4</span></p>
+                </div>
+
+                <div class="tooltip-row">
+                    <div class="tooltip-icon" id="tooltip-icon-iqr"></div>
+                    <p class="tooltip-text"><span class="tooltip-text-label">9/31 IQR:</span> <span id="tooltip-text-val-iqr">99.2 - 134.5</span></p>
+                </div>
+
             </div>
+
         </div>
 
         <!-- Optional text description to accompany the chart -->

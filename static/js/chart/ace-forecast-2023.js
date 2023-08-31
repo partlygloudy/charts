@@ -2,9 +2,15 @@
 // Globals
 let parseTime = d3.timeParse("%m/%d/%y");
 
+let chartSize;
+let chartData;
+
 
 // Run on page load
 $(document).ready(function() {
+
+    // Check the size of the page
+    chartSize = checkChartSize();
 
     // Create the chart and add to page
     updateChart();
@@ -22,13 +28,45 @@ function updateChart() {
             d.Date = parseTime(d.Date);
         });
 
-        // Build chart from the data
-        let newSvg = buildChart(data);
+        // Save chart data to variable
+        chartData = data;
 
-        // Update the chart on the page
+        // Draw the chart and append to page
+        let newSvg = buildChart(chartData);
         $("#chart-body").append(newSvg);
 
     });
+
+}
+
+window.onresize = function() {
+    let newChartSize = checkChartSize();
+    if (chartSize !== newChartSize) {
+        chartSize = newChartSize;
+        resizeChart();
+    }
+}
+
+function checkChartSize() {
+    if (window.innerWidth < 600) {
+        return "SMALL";
+    } else if (window.innerWidth < 750) {
+        return "MEDIUM";
+    } else {
+        return "LARGE"
+    }
+}
+
+function resizeChart() {
+
+    // Remove existing chart
+    $("#chart-body svg").remove();
+
+    // Redraw the chart
+    let newSvg = buildChart(chartData);
+
+    // Append the chart to the page
+    $("#chart-body").append(newSvg);
 
 }
 
@@ -38,8 +76,19 @@ function buildChart(data) {
     // ----- SCALES, PARAMS, CONSTANTS ------ //
 
     // Width and height in pixels of the svg viewBox
-    const width = 1200;
-    const height = 600;
+    let width;
+    let height;
+
+    if (chartSize === "LARGE") {
+        width = 1100;
+        height =  700;
+    } else if (chartSize === "MEDIUM") {
+        width = 900;
+        height =  600;
+    } else {
+        width = 500;
+        height = 700;
+    }
 
     // Empty space on each side of chart (inside svg area)
     const paddingTop = 60;
@@ -66,7 +115,7 @@ function buildChart(data) {
     const yScale = d3.scaleLinear().domain(domainY).range(rangeY);
 
     // Use the x, y scales to create bottom, left 'axis functions' respectively
-    const xAxis = d3.axisBottom(xScale);
+    const xAxis = d3.axisBottom(xScale).ticks(d3.timeMonth.every(1));
     const yAxis = d3.axisLeft(yScale);
 
 
@@ -229,7 +278,6 @@ function buildChart(data) {
         .attr("y2", rangeY[1])
         .attr("id", "selected-date-marker");
 
-
     // ----- EVENT HANDLING ------ //
 
     // Update the selected date marker and tooltip data as cursor moves
@@ -257,19 +305,22 @@ function buildChart(data) {
         selectedDateLine
             .attr("x1", x)
             .attr("x2", x);
-        
+
         // If cursor date has changed, update tooltip
         if (cursorMonth !== prevCursorMonth || cursorDay !== prevCursorDay) {
 
-            let dataForDate = undefined;
+            // Record the cursor date to avoid scanning again on same date
+            prevCursorMonth = cursorMonth;
+            prevCursorDay = cursorDay;
 
-            // Scan the CSV data until we find the right date
+            // Fetch the data for this date
+            let dataForDate = undefined;
             data.some(d => {
                 dataForDate = d;
                 return d.Date.getMonth() === cursorMonth && d.Date.getDate() === cursorDay;
             });
 
-            // Update the data in the tooltip box
+            // Update the tooltip box
             $("#tooltip-date").text(cursorDate.toLocaleString('default', {
                 month: 'long',
                 year: "numeric",
@@ -278,7 +329,7 @@ function buildChart(data) {
             $("#tooltip-text-val-hist").text(dataForDate["Historical"]);
             $("#tooltip-text-val-csu").text(dataForDate["CSU-Model"]);
 
-            if (dataForDate["Actual"] != 0) {
+            if (dataForDate["Actual"] !== 0) {
                 $("#tooltip-text-val-actual").text(dataForDate["Actual"]);
                 $("#tooltip-text-val-proj").text(dataForDate["Predicted-Median"]);
                 $("#tooltip-text-val-iqr").text(`${dataForDate["Predicted-LQ"]} - ${dataForDate["Predicted-UQ"]}`);
@@ -287,10 +338,6 @@ function buildChart(data) {
                 $("#tooltip-text-val-proj").text(latestMedian);
                 $("#tooltip-text-val-iqr").text(`${latestLQ} - ${latestUQ}`);
             }
-
-            // Record the cursor date to avoid scanning again on same date
-            prevCursorMonth = cursorMonth;
-            prevCursorDay = cursorDay;
 
         }
 
