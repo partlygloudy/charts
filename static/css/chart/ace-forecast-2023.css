@@ -124,3 +124,30 @@
     display: inline-block;
     width: 60px;
 }
+
+
+@media only screen and (max-width: 500px) {
+
+    #tooltip-box {
+        padding: 4px;
+    }
+
+    .tooltip-icon {
+        width: 11px;
+        margin-right: 4px;
+    }
+
+    #tooltip-date {
+        font-size: 0.65rem;
+    }
+
+    .tooltip-text {
+        font-size: 0.65rem;
+        margin: 2px 0;
+    }
+
+    .tooltip-text-label {
+        width: 50px;
+    }
+
+}

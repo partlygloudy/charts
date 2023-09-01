@@ -48,7 +48,7 @@ window.onresize = function() {
 }
 
 function checkChartSize() {
-    if (window.innerWidth < 600) {
+    if (window.innerWidth < 500) {
         return "SMALL";
     } else if (window.innerWidth < 750) {
         return "MEDIUM";
@@ -83,11 +83,11 @@ function buildChart(data) {
         width = 1100;
         height =  700;
     } else if (chartSize === "MEDIUM") {
-        width = 900;
-        height =  600;
+        width = 800;
+        height =  650;
     } else {
         width = 500;
-        height = 700;
+        height = 500;
     }
 
     // Empty space on each side of chart (inside svg area)
@@ -115,7 +115,7 @@ function buildChart(data) {
     const yScale = d3.scaleLinear().domain(domainY).range(rangeY);
 
     // Use the x, y scales to create bottom, left 'axis functions' respectively
-    const xAxis = d3.axisBottom(xScale).ticks(d3.timeMonth.every(1));
+    const xAxis = d3.axisBottom(xScale).ticks(d3.timeMonth.every(1)).tickFormat(d3.timeFormat("%b"));
     const yAxis = d3.axisLeft(yScale);
 
 
@@ -126,6 +126,8 @@ function buildChart(data) {
     svg.append("g")
         .attr("transform", `translate(0, ${height - paddingBottom})`)
         .call(xAxis)
+        .selectAll(".tick text")
+        .attr("dx", "-0.5em");  // Adjust the position of the text
 
     // Y axis & horizontal reference lines
     svg.append("g")

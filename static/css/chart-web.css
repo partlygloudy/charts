@@ -91,4 +91,37 @@ body {
     max-width: 100%;
 }
 
+#chart-description p {
+    margin: 0 0 10px 0;
+}
 
+
+/* -------------------------------- */
+/* ---  Narrow Screens ------------ */
+/* -------------------------------- */
+
+
+@media only screen and (max-width: 750px) {
+
+    #chart-title {
+        font-size: 1.5rem;
+        margin: 0 0 5px 0;
+        padding-right: 20px;
+        line-height: 20px;
+    }
+
+    #chart-subtitle {
+        margin: 0;
+        padding-right: 20px;
+    }
+
+    #chart-logo-text {
+        font-size: 0.85rem;
+        padding: 5px 10px;
+    }
+
+    #chart-body {
+        margin: 10px 0 10px 0;
+    }
+
+}
