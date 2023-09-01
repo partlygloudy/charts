@@ -78,10 +78,20 @@ app.get("/web/:chart", function (request, response) {
  */
 app.get("/embed/:chart", function (request, response) {
 
-    // Fill in all the required data for rendering the specified chart
+    // Get manifest data for the requested chart
+    const chartData = manifest["data"][request.params.chart];
 
-    // Render the embedded chart template with the correct data
-    response.render("embed");
+    // Render the web chart viewer template with the correct data
+    response.render("embed", {
+        chartPageTitle: chartData["pageTitle"],
+        chartStylesheet: chartData["chartStylesheet"],
+        chartScript: chartData["chartScript"],
+        chartTitle: chartData["chartTitle"],
+        chartSubtitle: chartData["chartSubtitle"],
+        chartDescription: chartData["chartDescription"],
+        chartDataSource: chartData["chartDataSource"],
+        chartLastUpdate: chartData["chartLastUpdate"]
+    });
 
 })
 

@@ -1,0 +1,20 @@
+
+/* ----- BASIC PAGE LAYOUT STYLING ----- */
+
+html {
+}
+
+body {
+    width: 100%;
+}
+
+#content-wrapper {
+    height: 100%;
+    width: 100%;
+    padding: 3px;
+    box-sizing: border-box;
+}
+
+#chart-wrapper {
+    max-width: 100%;
+}
