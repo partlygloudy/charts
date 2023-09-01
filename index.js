@@ -84,7 +84,13 @@ app.get("/embed/:chart", function (request, response) {
 })
 
 
-// Start the server
-app.listen(3000, function () {
-    console.log("App available at http://localhost:3000")
-})
+// ------------------------- //
+// ----- RUN WEBSERVER ----- //
+// ------------------------- //
+
+
+// Get port from env variable if set, otherwise use port 8080
+const port = parseInt(process.env.PORT) || 8080;
+app.listen(port, () => {
+    console.log(`Running at http://localhost:${port}`);
+});
