@@ -22,7 +22,7 @@ body {
 #content-wrapper {
     height: 100%;
     max-width: 100%;
-    padding: 25px;
+    padding: 25px 0;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -33,7 +33,7 @@ body {
     max-width: 90%;
     display: flex;
     flex-direction: column;
-    padding: 20px;
+    padding: 20px 20px 10px 20px;
     box-sizing: border-box;
     box-shadow: rgba(0, 0, 0, 0.2) 0 0 3px;
 }
@@ -95,6 +95,39 @@ body {
     margin: 0 0 10px 0;
 }
 
+#chart-footer {
+    font-family: 'Crimson Text', Cambria, serif;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%
+}
+
+#chart-footer p {
+    display: inline-block;
+    font-size: 0.8rem;
+    color: rgb(180, 180, 180);
+}
+
+#chart-footer-last-update {
+    font-style: italic;
+}
+
+a {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    transition: 0.2s;
+}
+
+a:hover {
+    background-color: lightgray;
+}
+
+
+
+
 
 /* -------------------------------- */
 /* ---  Narrow Screens ------------ */
@@ -102,6 +135,10 @@ body {
 
 
 @media only screen and (max-width: 750px) {
+
+    #chart-wrapper {
+        padding: 15px 15px 7px 15px;
+    }
 
     #chart-title {
         font-size: 1.5rem;

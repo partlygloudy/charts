@@ -65,7 +65,9 @@ app.get("/web/:chart", function (request, response) {
         chartScript: chartData["chartScript"],
         chartTitle: chartData["chartTitle"],
         chartSubtitle: chartData["chartSubtitle"],
-        chartDescription: chartData["chartDescription"]
+        chartDescription: chartData["chartDescription"],
+        chartDataSource: chartData["chartDataSource"],
+        chartLastUpdate: chartData["chartLastUpdate"]
     });
 
 })

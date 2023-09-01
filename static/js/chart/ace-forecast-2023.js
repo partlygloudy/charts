@@ -126,7 +126,7 @@ function buildChart(data) {
     svg.append("g")
         .attr("transform", `translate(0, ${height - paddingBottom})`)
         .call(xAxis)
-        .selectAll(".tick text")
+        .selectAll(".tick:last-child text")
         .attr("dx", "-0.5em");  // Adjust the position of the text
 
     // Y axis & horizontal reference lines
