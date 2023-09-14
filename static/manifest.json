@@ -13,7 +13,7 @@
       "chartSubtitle": "Forecast for accumulated cyclone energy (ACE) in the North Atlantic through the 2023 hurricane season",
       "chartDescription": "<p>Daily forecasts for the Accumulated Cyclone Energy in the Atlantic Ocean on September 30th. This is the forecast I’m using to predict <a href='https://www.metaculus.com/questions/17721/north-atlantic-ace-on-sep-30-2023/' target='_blank'>this question</a> in Metaculus’s quarterly forecasting tournament. There is no meteorological significance of Sep. 30th, this is just the end date for the tournament.</p><p>My forecast is based entirely off of the Colorado State University <a href='https://tropical.colostate.edu/forecasting.html' target='_blank'>Tropical Meteorology Project forecasts</a> for this year. I use their 2023 full-season forecast (which includes a median estimate and error bands), combined with historical averages (from 1991 - 2020) to produce a daily estimate. See <a href='https://blog.jakegloudemans.com/post/19-my-2023-ace-forecast' target='_blank'>this blog post</a> for a more detailed explanation.</p>",
       "chartDataSource": "<a href='http://tropical.atmos.colostate.edu/Realtime/index.php?loc=northatlantic' target='_blank'>CSU Tropical Meteorology Project</a>",
-      "chartLastUpdate": "9/11/2023"
+      "chartLastUpdate": "9/13/2023"
     }
 
   }
