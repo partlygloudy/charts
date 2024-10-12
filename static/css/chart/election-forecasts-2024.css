@@ -1,0 +1,140 @@
+
+
+.tick-y-cross {
+    stroke: lightgray;
+}
+
+.tick text {
+    font-size: 1.2rem;
+}
+
+.y-axis-label {
+    font-size: 1.2rem;
+}
+
+.chart-data {
+    fill: none;
+    stroke-width: 1px;
+}
+
+#chart-data-fivethirtyeight {
+    stroke: #ff6c07;
+}
+
+#chart-data-silver-bulletin {
+    stroke: #0fad0f;
+}
+
+#chart-data-the-economist {
+    stroke: #ff0000;
+}
+
+#chart-data-split-ticket {
+    stroke: #8005a6;
+}
+
+#chart-data-polymarket {
+    stroke: #1725ee;
+}
+
+#chart-data-manifold {
+    stroke: #6d29d8;
+}
+
+#selected-date-marker {
+    stroke: darkgray;
+    stroke-dasharray: 4px 3px;
+}
+
+#past-date-shading {
+    stroke: none;
+    fill: rgb(247 247 247 / 80%);
+}
+
+#tooltip-box {
+    padding: 6px;
+    position: absolute;
+    bottom: 30px;
+    right: 10px;
+    background: white;
+    border: 1px solid rgb(100, 100, 100);
+    font-family: Arial, sans-serif;
+}
+
+.tooltip-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.tooltip-icon {
+    width: 15px;
+    height: 0;
+    margin-right: 5px;
+}
+
+#tooltip-icon-fivethirtyeight {
+    border-bottom: 2px solid #ff6c07;
+}
+
+#tooltip-icon-silver-bulletin {
+    border-bottom: 2px solid #0fad0f;
+}
+
+#tooltip-icon-the-economist {
+    border-bottom: 2px solid #ff0000;
+}
+
+#tooltip-icon-split-ticket {
+    border-bottom: 2px solid #8005a6;
+}
+
+#tooltip-icon-polymarket {
+    border-bottom: 2px solid #1725ee;
+}
+
+#tooltip-icon-manifold {
+    border-bottom: 2px solid #6d29d8;
+}
+
+#tooltip-date {
+    font-size: 0.75rem;
+    margin: 0 0 5px 0;
+}
+
+.tooltip-text {
+    font-size: 0.75rem;
+    margin: 3px 0;
+}
+
+.tooltip-text-label {
+    display: inline-block;
+    width: 70px;
+}
+
+
+@media only screen and (max-width: 500px) {
+
+    #tooltip-box {
+        padding: 4px;
+    }
+
+    .tooltip-icon {
+        width: 11px;
+        margin-right: 4px;
+    }
+
+    #tooltip-date {
+        font-size: 0.65rem;
+    }
+
+    .tooltip-text {
+        font-size: 0.65rem;
+        margin: 2px 0;
+    }
+
+    .tooltip-text-label {
+        width: 55px;
+    }
+
+}

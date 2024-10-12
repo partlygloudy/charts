@@ -1,6 +1,6 @@
 
 // Globals
-let parseTime = d3.timeParse("%m/%d/%y");
+let parseTime = d3.timeParse("%m/%d/%Y");
 
 let chartSize;
 let chartData;
@@ -12,7 +12,7 @@ $(document).ready(function() {
     // Check the size of the page
     chartSize = checkChartSize();
 
-    // Add the tooltip html to the page
+    // Add tooltip box html to page
     addToolTipHtml();
 
     // Create the chart and add to page
@@ -24,11 +24,17 @@ $(document).ready(function() {
 function updateChart() {
 
     // Request chart data
-    d3.csv("/static/data/ace-forecast-2023.csv").then(function(data) {
+    d3.csv("/static/data/election-forecasts-2024.csv").then(function(data) {
 
         // Parse dates
         data.forEach(function(d) {
             d.Date = parseTime(d.Date);
+            d["FiveThirtyEight"] = d["FiveThirtyEight"] === "" ? "-" : d["FiveThirtyEight"];
+            d["Silver-Bulletin"] = d["Silver-Bulletin"] === "" ? "-" : d["Silver-Bulletin"];
+            d["The-Economist"] = d["The-Economist"] === "" ? "-" : d["The-Economist"];
+            d["Split-Ticket"] = d["Split-Ticket"] === "" ? "-" : d["Split-Ticket"];
+            d["Polymarket"] = d["Polymarket"] === "" ? "-" : d["Polymarket"];
+            d["Manifold"] = d["Manifold"] === "" ? "-" : d["Manifold"];
         });
 
         // Save chart data to variable
@@ -100,8 +106,8 @@ function buildChart(data) {
     const paddingLeft = 40;
 
     // Domain (min, max values) of the data along each axis
-    const domainX = [parseTime("7/6/23"), parseTime("11/1/23")];
-    const domainY = [0, 180];
+    const domainX = [parseTime("8/1/2024"), parseTime("11/5/2024")];
+    const domainY = [-50, 50];
 
     // Range (min, max chart position in px) for each axis
     const rangeX = [paddingLeft, width-paddingRight];
@@ -123,7 +129,6 @@ function buildChart(data) {
 
 
     // ----- AXES & REFERENCE LINES ------ //
-
 
     // X axis
     svg.append("g")
@@ -147,134 +152,91 @@ function buildChart(data) {
                 .classed("tick-y-cross", true)
         })
 
-        // Add label above Y axis
-        .call(g => g.append("text")
-            .attr("x", -paddingLeft)
-            .attr("y", 20)
-            .attr("fill", "black")
-            .attr("text-anchor", "start")
-            .text("↑ Accumulated Cyclone Energy")
-            .classed("y-axis-label", true));
-
-    // Vertical line marking September 30
-    svg.append("g")
-        .append("line")
-        .attr("x1", xScale(parseTime("9/30/23")))
-        .attr("y1", rangeY[0])
-        .attr("x2", xScale(parseTime("9/30/23")))
-        .attr("y2", rangeY[1] - 10)
-        .attr("id", "end-date-marker");
-
-
     // ----- FORECAST DATA ------ //
 
-    // Historical ACE averages by date
-    let lineHist = d3.line()
+    // Filter data to exclude everything outside chart date range
+    data = data.filter(d => d["Date"] >= domainX[0] && d["Date"] <= domainX[1]);
+
+    // FiveThirtyEight
+    let lineFiveThirtyEight = d3.line()
         .x(d => xScale(d["Date"]))
-        .y(d => yScale(d["Historical"]))
+        .y(d => yScale(d["FiveThirtyEight"]))
+        .defined(d => d["FiveThirtyEight"] !== "-");
 
     // Averages scaled to reach CSU modeled value for full season
-    let lineCSU = d3.line()
+    let lineSilverBulletin = d3.line()
         .x(d => xScale(d["Date"]))
-        .y(d => yScale(d["CSU-Model"]))
+        .y(d => yScale(d["Silver-Bulletin"]))
+        .defined(d => d["Silver-Bulletin"] !== "-");
 
-    // Predicted Sept. 30 value on each date (quartiles)
-    let areaQuartiles = d3.area()
-        .defined(d => d["Predicted-LQ"] != 0)
+    // Averages scaled to reach CSU modeled value for full season
+    let lineTheEconomist = d3.line()
         .x(d => xScale(d["Date"]))
-        .y0(d => yScale(d["Predicted-LQ"]))
-        .y1(d => yScale(d["Predicted-UQ"]))
+        .y(d => yScale(d["The-Economist"]))
+        .defined(d => d["The-Economist"] !== "-");
 
-    // Predicted Sept. 30 value on each date (median)
-    let linePredMedian = d3.line()
-        .defined(d => d["Predicted-Median"] != 0)
+    // Averages scaled to reach CSU modeled value for full season
+    let lineSplitTicket = d3.line()
         .x(d => xScale(d["Date"]))
-        .y(d => yScale(d["Predicted-Median"]))
+        .y(d => yScale(d["Split-Ticket"]))
+        .defined(d => d["Split-Ticket"] !== "-");
 
-    // Actual value measured on each date
-    let lineActual = d3.line()
-        .defined(d => d["Actual"] != 0)
+    // Averages scaled to reach CSU modeled value for full season
+    let linePolymarket = d3.line()
         .x(d => xScale(d["Date"]))
-        .y(d => yScale(d["Actual"]))
+        .y(d => yScale(d["Polymarket"]))
+        .defined(d => d["Polymarket"] !== "-");
+
+    // Averages scaled to reach CSU modeled value for full season
+    let lineManifold = d3.line()
+        .x(d => xScale(d["Date"]))
+        .y(d => yScale(d["Manifold"]))
+        .defined(d => d["Manifold"] !== "-");
 
     // Draw each path
 
     svg.append("path")
-        .attr("d", lineHist(data))
+        .attr("d", lineFiveThirtyEight(data))
         .classed("chart-data", true)
-        .attr("id", "chart-data-historical")
+        .attr("id", "chart-data-fivethirtyeight")
 
     svg.append("path")
-        .attr("d", lineCSU(data))
+        .attr("d", lineSilverBulletin(data))
         .classed("chart-data", true)
-        .attr("id", "chart-data-csu")
+        .attr("id", "chart-data-silver-bulletin")
 
     svg.append("path")
-        .attr("d", areaQuartiles(data))
+        .attr("d", lineTheEconomist(data))
         .classed("chart-data", true)
-        .attr("id", "chart-data-quartiles")
+        .attr("id", "chart-data-the-economist")
 
     svg.append("path")
-        .attr("d", linePredMedian(data))
+        .attr("d", lineSplitTicket(data))
         .classed("chart-data", true)
-        .attr("id", "chart-data-median")
+        .attr("id", "chart-data-split-ticket")
 
     svg.append("path")
-        .attr("d", lineActual(data))
+        .attr("d", linePolymarket(data))
         .classed("chart-data", true)
-        .attr("id", "chart-data-actual")
-
-
-    // Get date of latest prediction and latest prediction values
-    let latestDate = null;
-    let latestMedian = null;
-    let latestLQ = null;
-    let latestUQ = null;
-    let latestDeviation = null;
-
-    data.forEach(d => {
-
-        if (d["Predicted-Median"] != 0) {
-            latestDate = d["Date"];
-            latestMedian = d["Predicted-Median"];
-            latestLQ = d["Predicted-LQ"];
-            latestUQ = d["Predicted-UQ"];
-            latestDeviation = d["Deviation"];
-        }
-
-    })
-
-    // Current prediction projected forward
-    svg.append("g")
-        .append("line")
-        .attr("x1", xScale(latestDate))
-        .attr("y1", yScale(latestMedian))
-        .attr("x2", xScale(parseTime("9/30/23")))
-        .attr("y2", yScale(latestMedian))
-        .attr("id", "chart-data-median-proj");
-
-    // Current quartiles projected forward
-    svg.append("rect")
-        .attr("x", xScale(latestDate))
-        .attr("y", yScale(latestUQ))
-        .attr("width", xScale(parseTime("9/30/23")) - xScale(latestDate))
-        .attr("height", yScale(latestLQ) - yScale(latestUQ))
-        .attr("id", "chart-data-quartiles-proj")
-
-    // Predicted value for each date
-    let linePredicted = d3.line()
-        .defined(d => d["Actual"] == 0)
-        .x(d => xScale(d["Date"]))
-        .y(d => yScale(parseFloat(d["CSU-Model"]) + parseFloat(latestDeviation)))
+        .attr("id", "chart-data-polymarket")
 
     svg.append("path")
-        .attr("d", linePredicted(data))
+        .attr("d", lineManifold(data))
         .classed("chart-data", true)
-        .attr("id", "chart-data-prediction")
-
+        .attr("id", "chart-data-manifold")
 
     // ----- INTERACTIVE ELEMENTS ----- //
 
+    // Get latest forecast value for each forecast source
+    let latestData = data[data.length - 1];
+    $("#tooltip-text-val-fivethirtyeight").text(latestData["FiveThirtyEight"]);
+    $("#tooltip-text-val-silver-bulletin").text(latestData["Silver-Bulletin"]);
+    $("#tooltip-text-val-the-economist").text(latestData["The-Economist"]);
+    $("#tooltip-text-val-split-ticket").text(latestData["Split-Ticket"]);
+    $("#tooltip-text-val-polymarket").text(latestData["Polymarket"]);
+    $("#tooltip-text-val-manifold").text(latestData["Manifold"]);
+
+    let latestDate = latestData["Date"];
     const selectedDateLine = svg.append("g")
         .append("line")
         .attr("x1", xScale(latestDate))
@@ -282,6 +244,13 @@ function buildChart(data) {
         .attr("x2", xScale(latestDate))
         .attr("y2", rangeY[1])
         .attr("id", "selected-date-marker");
+
+    // Update the tooltip box date
+    $("#tooltip-date").text(latestDate.toLocaleString('default', {
+        month: 'long',
+        year: "numeric",
+        day: "numeric"
+    }));
 
     // ----- EVENT HANDLING ------ //
 
@@ -331,18 +300,13 @@ function buildChart(data) {
                 year: "numeric",
                 day: "numeric"
             }));
-            $("#tooltip-text-val-hist").text(dataForDate["Historical"]);
-            $("#tooltip-text-val-csu").text(dataForDate["CSU-Model"]);
 
-            if (dataForDate["Actual"] !== 0) {
-                $("#tooltip-text-val-actual").text(dataForDate["Actual"]);
-                $("#tooltip-text-val-proj").text(dataForDate["Predicted-Median"]);
-                $("#tooltip-text-val-iqr").text(`${dataForDate["Predicted-LQ"]} - ${dataForDate["Predicted-UQ"]}`);
-            } else {
-                $("#tooltip-text-val-actual").text("-");
-                $("#tooltip-text-val-proj").text(latestMedian);
-                $("#tooltip-text-val-iqr").text(`${latestLQ} - ${latestUQ}`);
-            }
+            $("#tooltip-text-val-fivethirtyeight").text(dataForDate["FiveThirtyEight"] + "%");
+            $("#tooltip-text-val-silver-bulletin").text(dataForDate["Silver-Bulletin"] + "%");
+            $("#tooltip-text-val-the-economist").text(dataForDate["The-Economist"] + "%");
+            $("#tooltip-text-val-split-ticket").text(dataForDate["Split-Ticket"] + "%");
+            $("#tooltip-text-val-polymarket").text(dataForDate["Polymarket"] + "%");
+            $("#tooltip-text-val-manifold").text(dataForDate["Manifold"] + "%");
 
         }
 
@@ -355,6 +319,7 @@ function buildChart(data) {
 
 }
 
+
 function addToolTipHtml() {
 
     $("#chart-body").append(
@@ -364,28 +329,33 @@ function addToolTipHtml() {
             <h3 id="tooltip-date"></h3>
 
             <div class="tooltip-row">
-                <div class="tooltip-icon" id="tooltip-icon-hist"></div>
-                <p class="tooltip-text"><span class="tooltip-text-label">Hist. Avg:</span> <span id="tooltip-text-val-hist">-</span></p>
+                <div class="tooltip-icon" id="tooltip-icon-fivethirtyeight"></div>
+                <p class="tooltip-text"><span class="tooltip-text-label">FiveThirtyEight:</span> <span id="tooltip-text-val-fivethirtyeight">-</span></p>
             </div>
 
             <div class="tooltip-row">
-                <div class="tooltip-icon" id="tooltip-icon-csu"></div>
-                <p class="tooltip-text"><span class="tooltip-text-label">CSU Model:</span> <span id="tooltip-text-val-csu">-</span></p>
+                <div class="tooltip-icon" id="tooltip-icon-silver-bulletin"></div>
+                <p class="tooltip-text"><span class="tooltip-text-label">Silver Bulletin:</span> <span id="tooltip-text-val-silver-bulletin">-</span></p>
             </div>
 
             <div class="tooltip-row">
-                <div class="tooltip-icon" id="tooltip-icon-actual"></div>
-                <p class="tooltip-text"><span class="tooltip-text-label">Actual:</span> <span id="tooltip-text-val-actual">-</span></p>
+                <div class="tooltip-icon" id="tooltip-icon-the-economist"></div>
+                <p class="tooltip-text"><span class="tooltip-text-label">The Economist:</span> <span id="tooltip-text-val-the-economist">-</span></p>
             </div>
 
             <div class="tooltip-row">
-                <div class="tooltip-icon" id="tooltip-icon-proj"></div>
-                <p class="tooltip-text"><span class="tooltip-text-label">9/30 Proj:</span> <span id="tooltip-text-val-proj">-</span></p>
+                <div class="tooltip-icon" id="tooltip-icon-split-ticket"></div>
+                <p class="tooltip-text"><span class="tooltip-text-label">Split Ticket:</span> <span id="tooltip-text-val-split-ticket">-</span></p>
             </div>
 
             <div class="tooltip-row">
-                <div class="tooltip-icon" id="tooltip-icon-iqr"></div>
-                <p class="tooltip-text"><span class="tooltip-text-label">9/30 IQR:</span> <span id="tooltip-text-val-iqr">-</span></p>
+                <div class="tooltip-icon" id="tooltip-icon-polymarket"></div>
+                <p class="tooltip-text"><span class="tooltip-text-label">Polymarket:</span> <span id="tooltip-text-val-polymarket">-</span></p>
+            </div>
+            
+            <div class="tooltip-row">
+                <div class="tooltip-icon" id="tooltip-icon-manifold"></div>
+                <p class="tooltip-text"><span class="tooltip-text-label">Manifold:</span> <span id="tooltip-text-val-manifold">-</span></p>
             </div>
 
         </div>

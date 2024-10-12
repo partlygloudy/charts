@@ -1,6 +1,7 @@
 {
   "ids": [
-    "ace-forecast-2023"
+    "ace-forecast-2023",
+    "election-forecasts-2024"
   ],
 
   "data": {
@@ -14,6 +15,17 @@
       "chartDescription": "<p>Daily forecasts for the Accumulated Cyclone Energy in the Atlantic Ocean on September 30th. This is the forecast I’m using to predict <a href='https://www.metaculus.com/questions/17721/north-atlantic-ace-on-sep-30-2023/' target='_blank'>this question</a> in Metaculus’s quarterly forecasting tournament. There is no meteorological significance of Sep. 30th, this is just the end date for the tournament.</p><p>My forecast is based entirely off of the Colorado State University <a href='https://tropical.colostate.edu/forecasting.html' target='_blank'>Tropical Meteorology Project forecasts</a> for this year. I use their 2023 full-season forecast (which includes a median estimate and error bands), combined with historical averages (from 1991 - 2020) to produce a daily estimate. See <a href='https://blog.jakegloudemans.com/post/19-my-2023-ace-forecast' target='_blank'>this blog post</a> for a more detailed explanation.</p>",
       "chartDataSource": "<a href='http://tropical.atmos.colostate.edu/Realtime/index.php?loc=northatlantic' target='_blank'>CSU Tropical Meteorology Project</a>",
       "chartLastUpdate": "9/29/2023"
+    },
+
+    "election-forecasts-2024": {
+      "pageTitle": "2024 Election Forecast Comparison",
+      "chartStylesheet": "election-forecasts-2024.css",
+      "chartScript": "election-forecasts-2024.js",
+      "chartTitle": "2024 Election Forecast Comparison",
+      "chartSubtitle": "Aggregated forecasts for the 2024 US presidential election",
+      "chartDescription": "This chart compares forecasts for the 2024 US presidential election between Kamala Harris and Donald Trump produced by various analysts, news organizations, and prediction markets. It is meant to illustrate the extent to which variosu reputable forecasts have (or haven't) diverged since Kamala Harris became the Democratic nominee for president. Forecasts from paywalled sources omit the most recent week of data.</p>",
+      "chartDataSource": "<a href='' target='_blank'>FiveThirtyEight</a>, <a href='' target='_blank'>Silver Bulletin</a>, <a href='' target='_blank'>Polymarket</a>, <a href='' target='_blank'>Manifold</a>, <a href='' target='_blank'>The Economist</a>, <a href='' target='_blank'>Split Ticket</a>",
+      "chartLastUpdate": "10/12/2024"
     }
 
   }
