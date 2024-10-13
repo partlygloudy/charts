@@ -6,7 +6,9 @@ let chartSize;
 let chartData;
 
 let selectedForecasts = [];
-let selectedData = "harris-pct"
+let selectedCandidate = "harris";
+let selectedMetric = "pct"
+let selectedData = "harris-pct";
 
 // Run on page load
 $(document).ready(function() {
@@ -418,15 +420,17 @@ function clickDataSelectButton(e) {
     let prevSelectedData = selectedData;
 
     // Determine which button was pressed
-    if ($(e.currentTarget).hasClass("harris-pct")) {
-        selectedData = "harris-pct";
-    } else if ($(e.currentTarget).hasClass("trump-pct")) {
-        selectedData = "trump-pct";
-    } else if ($(e.currentTarget).hasClass("harris-margin")) {
-        selectedData = "harris-margin";
-    } else if ($(e.currentTarget).hasClass("trump-margin")) {
-        selectedData = "trump-margin";
+    if ($(e.currentTarget).hasClass("select-harris")) {
+        selectedCandidate = "harris"
+    } else if ($(e.currentTarget).hasClass("select-trump")) {
+        selectedCandidate = "trump";
+    } else if ($(e.currentTarget).hasClass("select-margin")) {
+        selectedMetric = "margin";
+    } else if ($(e.currentTarget).hasClass("select-pct")) {
+        selectedMetric = "pct";
     }
+
+    selectedData = selectedCandidate + "-" + selectedMetric;
 
     // If already selected button is pressed, do nothing
     if (prevSelectedData === selectedData) {
@@ -435,7 +439,18 @@ function clickDataSelectButton(e) {
 
     // Update selector button styling
     $(".data-select-button").removeClass("selected");
-    $(e.currentTarget).addClass("selected");
+
+    if (selectedCandidate === "harris") {
+        $(".select-harris").addClass("selected");
+    } else {
+        $(".select-trump").addClass("selected");
+    }
+
+    if (selectedMetric === "margin") {
+        $(".select-margin").addClass("selected");
+    } else {
+        $(".select-pct").addClass("selected");
+    }
 
     // Update plot to show selected data
     remakeChart();
@@ -494,11 +509,16 @@ function overlayDataSelect() {
         `
         <!-- Tooltip box, overlayed on chart SVG -->
         <div id="data-select-wrapper">
+        
+            <div class="data-select-row">
+                <div class="data-select-button select-harris selected button-left">Harris</div>
+                <div class="data-select-button select-trump" >Trump</div>
+            </div>
             
-            <div class="data-select-button harris-pct selected">Harris %</div>
-            <div class="data-select-button trump-pct" >Trump %</div>
-            <div class="data-select-button harris-margin">Harris Margin</div>
-            <div class="data-select-button trump-margin">Trump Margin</div>
+            <div class="data-select-row">
+                <div class="data-select-button select-pct selected button-left">Win %</div>
+                <div class="data-select-button select-margin">% Lead</div>
+            </div>
 
         </div>
         `
