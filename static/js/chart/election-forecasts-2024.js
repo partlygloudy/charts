@@ -5,6 +5,8 @@ let parseTime = d3.timeParse("%m/%d/%Y");
 let chartSize;
 let chartData;
 
+let selectedForecasts = [];
+
 
 // Run on page load
 $(document).ready(function() {
@@ -14,6 +16,9 @@ $(document).ready(function() {
 
     // Add tooltip box html to page
     addToolTipHtml();
+
+    // Add click handlers to forecast labels
+    $(".tooltip-row").click(clickForecastLabel);
 
     // Create the chart and add to page
     updateChart();
@@ -103,7 +108,7 @@ function buildChart(data) {
     const paddingTop = 60;
     const paddingRight = 10;
     const paddingBottom = 30;
-    const paddingLeft = 40;
+    const paddingLeft = 50;
 
     // Domain (min, max values) of the data along each axis
     const domainX = [parseTime("8/1/2024"), parseTime("11/5/2024")];
@@ -125,7 +130,7 @@ function buildChart(data) {
 
     // Use the x, y scales to create bottom, left 'axis functions' respectively
     const xAxis = d3.axisBottom(xScale).ticks(d3.timeMonth.every(1)).tickFormat(d3.timeFormat("%b"));
-    const yAxis = d3.axisLeft(yScale);
+    const yAxis = d3.axisLeft(yScale).tickFormat(d => `${d}%`);
 
 
     // ----- AXES & REFERENCE LINES ------ //
@@ -320,6 +325,57 @@ function buildChart(data) {
 }
 
 
+function clickForecastLabel(e) {
+
+    let newSelection;
+
+    // Get the forecast that was clicked on
+    if ($(e.currentTarget).hasClass("fivethirtyeight")){
+        newSelection = "fivethirtyeight";
+    } else if ($(e.currentTarget).hasClass("silver-bulletin")){
+        newSelection = "silver-bulletin";
+    } else if ($(e.currentTarget).hasClass("the-economist")) {
+        newSelection = "the-economist";
+    } else if ($(e.currentTarget).hasClass("split-ticket")) {
+        newSelection = "split-ticket";
+    } else if ($(e.currentTarget).hasClass("polymarket")) {
+        newSelection = "polymarket";
+    } else if ($(e.currentTarget).hasClass("manifold")) {
+        newSelection = "manifold";
+    } else {
+        newSelection = "none";
+    }
+
+    // Add / remove it from the list of selected forecasts
+    if (newSelection !== "none") {
+
+        // If not already selected, add new selection
+        if (!selectedForecasts.includes(newSelection)) {
+            selectedForecasts.push(newSelection);
+        }
+
+        // Else remove selection
+        else {
+            selectedForecasts = selectedForecasts.filter(f => f !== newSelection);
+        }
+
+    }
+
+    // Update series highlighting
+    if (selectedForecasts.length === 0) {
+        $(".chart-data").removeClass("chart-data-foregrounded")
+            .removeClass("chart-data-backgrounded");
+    } else {
+        $(".chart-data").addClass("chart-data-backgrounded");
+        for (let forecast of selectedForecasts) {
+            $("#chart-data-" + forecast).removeClass("chart-data-backgrounded")
+                .addClass("chart-data-foregrounded");
+        }
+    }
+
+}
+
+
 function addToolTipHtml() {
 
     $("#chart-body").append(
@@ -328,32 +384,32 @@ function addToolTipHtml() {
         <div id="tooltip-box">
             <h3 id="tooltip-date"></h3>
 
-            <div class="tooltip-row">
+            <div class="tooltip-row fivethirtyeight">
                 <div class="tooltip-icon" id="tooltip-icon-fivethirtyeight"></div>
                 <p class="tooltip-text"><span class="tooltip-text-label">FiveThirtyEight:</span> <span id="tooltip-text-val-fivethirtyeight">-</span></p>
             </div>
 
-            <div class="tooltip-row">
+            <div class="tooltip-row silver-bulletin">
                 <div class="tooltip-icon" id="tooltip-icon-silver-bulletin"></div>
                 <p class="tooltip-text"><span class="tooltip-text-label">Silver Bulletin:</span> <span id="tooltip-text-val-silver-bulletin">-</span></p>
             </div>
 
-            <div class="tooltip-row">
+            <div class="tooltip-row the-economist">
                 <div class="tooltip-icon" id="tooltip-icon-the-economist"></div>
                 <p class="tooltip-text"><span class="tooltip-text-label">The Economist:</span> <span id="tooltip-text-val-the-economist">-</span></p>
             </div>
 
-            <div class="tooltip-row">
+            <div class="tooltip-row split-ticket">
                 <div class="tooltip-icon" id="tooltip-icon-split-ticket"></div>
                 <p class="tooltip-text"><span class="tooltip-text-label">Split Ticket:</span> <span id="tooltip-text-val-split-ticket">-</span></p>
             </div>
 
-            <div class="tooltip-row">
+            <div class="tooltip-row polymarket">
                 <div class="tooltip-icon" id="tooltip-icon-polymarket"></div>
                 <p class="tooltip-text"><span class="tooltip-text-label">Polymarket:</span> <span id="tooltip-text-val-polymarket">-</span></p>
             </div>
             
-            <div class="tooltip-row">
+            <div class="tooltip-row manifold">
                 <div class="tooltip-icon" id="tooltip-icon-manifold"></div>
                 <p class="tooltip-text"><span class="tooltip-text-label">Manifold:</span> <span id="tooltip-text-val-manifold">-</span></p>
             </div>

@@ -41,6 +41,14 @@
     stroke: #6d29d8;
 }
 
+.chart-data-backgrounded {
+    stroke: rgb(200,200,200) !important;
+}
+
+.chart-data-foregrounded {
+    stroke-width: 2px;
+}
+
 #selected-date-marker {
     stroke: darkgray;
     stroke-dasharray: 4px 3px;
@@ -65,12 +73,19 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.tooltip-row:hover {
+    background-color: rgb(240,240,240);
 }
 
 .tooltip-icon {
     width: 15px;
     height: 0;
     margin-right: 5px;
+    margin-left: 3px;
 }
 
 #tooltip-icon-fivethirtyeight {
@@ -126,15 +141,16 @@
 
     #tooltip-date {
         font-size: 0.65rem;
+        margin: 0 0 2px 0;
     }
 
     .tooltip-text {
         font-size: 0.65rem;
-        margin: 2px 0;
+        margin: 1px 0;
     }
 
     .tooltip-text-label {
-        width: 55px;
+        width: 60px;
     }
 
 }
