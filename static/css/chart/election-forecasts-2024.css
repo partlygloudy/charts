@@ -195,4 +195,17 @@
         width: 60px;
     }
 
+    #data-select-wrapper {
+        padding: 4px;
+        bottom: 30px;
+        left: 35px;
+    }
+
+    .data-select-button {
+        font-size: 0.65rem;
+        width: 65px;
+        height: 12px;
+        margin: 1px 0;
+    }
+
 }
