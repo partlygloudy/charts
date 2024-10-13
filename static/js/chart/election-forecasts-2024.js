@@ -9,6 +9,7 @@ let selectedForecasts = [];
 let selectedCandidate = "harris";
 let selectedMetric = "pct"
 let selectedData = "harris-pct";
+let selected2020Data = "biden-2020-pct";
 
 // Run on page load
 $(document).ready(function() {
@@ -117,13 +118,13 @@ function buildChart(data) {
 
     // Set Y domain based on data source
     if (selectedData === "harris-pct") {
-        domainY = [20, 80];
+        domainY = [10, 90];
     } else if (selectedData === "trump-pct") {
-        domainY = [20, 80];
+        domainY = [10, 90];
     } else if (selectedData === "harris-margin") {
-        domainY = [-50, 50];
+        domainY = [-80, 80];
     } else if (selectedData === "trump-margin") {
-        domainY = [-50, 50];
+        domainY = [-80, 80];
     }
 
     // Range (min, max chart position in px) for each axis
@@ -215,6 +216,13 @@ function buildChart(data) {
         .y(d => yScale(d["mani-" + selectedData]))
         .defined(d => d["mani-" + selectedData] !== "-")
         .curve(d3.curveBasis);
+
+    // 538 (2020)
+    let line538_2020 = d3.line()
+        .x(d => xScale(d["date"]))
+        .y(d => yScale(d[selected2020Data]))
+        .defined(d => d[selected2020Data] !== "-")
+        .curve(d3.curveBasis);
     
     // Draw each path
 
@@ -248,6 +256,11 @@ function buildChart(data) {
         .classed("chart-data", true)
         .attr("id", "chart-data-mani")
 
+    svg.append("path")
+        .attr("d", line538_2020(data))
+        .classed("chart-data", true)
+        .attr("id", "chart-data-538-2020")
+
 
     // ----- MARKERS / LABELS ----- //
 
@@ -265,13 +278,19 @@ function buildChart(data) {
     // ----- INTERACTIVE ELEMENTS ----- //
 
     // Get latest forecast value for each forecast source
-    let latestData = data[data.length - 1];
+    let latestDataIdx = data.length - 1;
+    while (latestDataIdx > 0 && data[latestDataIdx]["poly-" + selectedData] === "-") {
+        latestDataIdx -= 1;
+    }
+
+    let latestData = data[latestDataIdx];
     $("#tooltip-text-val-538").text(latestData["538-" + selectedData]);
     $("#tooltip-text-val-sb").text(latestData["sb-" + selectedData]);
     $("#tooltip-text-val-econ").text(latestData["econ-" + selectedData]);
     $("#tooltip-text-val-st").text(latestData["st-" + selectedData]);
     $("#tooltip-text-val-poly").text(latestData["poly-" + selectedData]);
     $("#tooltip-text-val-mani").text(latestData["mani-" + selectedData]);
+    $("#tooltip-text-val-538-2020").text(latestData[selected2020Data]);
 
     let latestDate = latestData["date"];
     const selectedDateLine = svg.append("g")
@@ -344,6 +363,7 @@ function buildChart(data) {
             $("#tooltip-text-val-st").text(dataForDate["st-" + selectedData] + "%");
             $("#tooltip-text-val-poly").text(dataForDate["poly-" + selectedData] + "%");
             $("#tooltip-text-val-mani").text(dataForDate["mani-" + selectedData] + "%");
+            $("#tooltip-text-val-538-2020").text(dataForDate[selected2020Data] + "%");
 
         }
 
@@ -432,6 +452,7 @@ function clickDataSelectButton(e) {
     }
 
     selectedData = selectedCandidate + "-" + selectedMetric;
+    selected2020Data = selectedCandidate === "harris" ? "biden-2020-" + selectedMetric : "trump-2020-" + selectedMetric
 
     // If already selected button is pressed, do nothing
     if (prevSelectedData === selectedData) {
@@ -469,7 +490,7 @@ function overlayToolTip() {
 
             <div class="tooltip-row 538">
                 <div class="tooltip-icon" id="tooltip-icon-538"></div>
-                <p class="tooltip-text"><span class="tooltip-text-label">FiveThirtyEight:</span> <span id="tooltip-text-val-538">-</span></p>
+                <p class="tooltip-text"><span class="tooltip-text-label">538:</span> <span id="tooltip-text-val-538">-</span></p>
             </div>
 
             <div class="tooltip-row sb">
@@ -495,6 +516,11 @@ function overlayToolTip() {
             <div class="tooltip-row mani">
                 <div class="tooltip-icon" id="tooltip-icon-mani"></div>
                 <p class="tooltip-text"><span class="tooltip-text-label">Manifold:</span> <span id="tooltip-text-val-mani">-</span></p>
+            </div>
+            
+            <div class="tooltip-row">
+                <div class="tooltip-icon" id="tooltip-icon-538-2020"></div>
+                <p class="tooltip-text"><span class="tooltip-text-label">538 (2020):</span> <span id="tooltip-text-val-538-2020">-</span></p>
             </div>
 
         </div>

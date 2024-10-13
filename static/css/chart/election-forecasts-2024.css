@@ -41,6 +41,11 @@
     stroke: #6d29d8;
 }
 
+#chart-data-538-2020 {
+    stroke: #646464;
+    stroke-dasharray: 5px 3px;
+}
+
 #chart-data-y-midpoint {
     stroke: rgb(150,150,150);
     stroke-dasharray: 4px 3px;
@@ -115,6 +120,10 @@
 
 #tooltip-icon-mani {
     border-bottom: 2px solid #6d29d8;
+}
+
+#tooltip-icon-538-2020 {
+    border-bottom: 2px dashed #646464;
 }
 
 #tooltip-date {
