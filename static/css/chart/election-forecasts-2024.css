@@ -87,8 +87,24 @@
     border-radius: 5px;
 }
 
+.tooltip-row.tooltip-selected {
+    background-color: rgb(220,220,220);
+}
+
+#tooltip-row-2020 {
+    cursor: unset;
+}
+
 .tooltip-row:hover {
     background-color: rgb(240,240,240);
+}
+
+#tooltip-row-2020:hover {
+    background-color: unset;
+}
+
+.tooltip-row.tooltip-selected:hover {
+    background-color: rgb(220,220,220);
 }
 
 .tooltip-icon {

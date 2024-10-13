@@ -422,6 +422,7 @@ function clickForecastLabel(e) {
 function highlightSelectedForecasts() {
 
     $(".chart-data").removeClass("chart-data-foregrounded");
+    $(".tooltip-row").removeClass("tooltip-selected");
 
     if (selectedForecasts.length === 0) {
         $(".chart-data").removeClass("chart-data-backgrounded");
@@ -430,6 +431,7 @@ function highlightSelectedForecasts() {
         for (let forecast of selectedForecasts) {
             $("#chart-data-" + forecast).removeClass("chart-data-backgrounded")
                 .addClass("chart-data-foregrounded");
+            $(".tooltip-row." + forecast).addClass("tooltip-selected")
         }
     }
 
@@ -518,7 +520,7 @@ function overlayToolTip() {
                 <p class="tooltip-text"><span class="tooltip-text-label">Manifold:</span> <span id="tooltip-text-val-mani">-</span></p>
             </div>
             
-            <div class="tooltip-row">
+            <div class="tooltip-row" id="tooltip-row-2020">
                 <div class="tooltip-icon" id="tooltip-icon-538-2020"></div>
                 <p class="tooltip-text"><span class="tooltip-text-label">538 (2020):</span> <span id="tooltip-text-val-538-2020">-</span></p>
             </div>
