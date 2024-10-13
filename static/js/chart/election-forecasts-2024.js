@@ -6,7 +6,7 @@ let chartSize;
 let chartData;
 
 let selectedForecasts = [];
-
+let selectedData = "harris-pct"
 
 // Run on page load
 $(document).ready(function() {
@@ -14,11 +14,13 @@ $(document).ready(function() {
     // Check the size of the page
     chartSize = checkChartSize();
 
-    // Add tooltip box html to page
-    addToolTipHtml();
+    // Add tooltip and data select overlays
+    overlayToolTip();
+    overlayDataSelect();
 
     // Add click handlers to forecast labels
     $(".tooltip-row").click(clickForecastLabel);
+    $(".data-select-button").click(clickDataSelectButton);
 
     // Create the chart and add to page
     updateChart();
@@ -33,13 +35,7 @@ function updateChart() {
 
         // Parse dates
         data.forEach(function(d) {
-            d.Date = parseTime(d.Date);
-            d["FiveThirtyEight"] = d["FiveThirtyEight"] === "" ? "-" : d["FiveThirtyEight"];
-            d["Silver-Bulletin"] = d["Silver-Bulletin"] === "" ? "-" : d["Silver-Bulletin"];
-            d["The-Economist"] = d["The-Economist"] === "" ? "-" : d["The-Economist"];
-            d["Split-Ticket"] = d["Split-Ticket"] === "" ? "-" : d["Split-Ticket"];
-            d["Polymarket"] = d["Polymarket"] === "" ? "-" : d["Polymarket"];
-            d["Manifold"] = d["Manifold"] === "" ? "-" : d["Manifold"];
+            d["date"] = parseTime(d["date"]);
         });
 
         // Save chart data to variable
@@ -57,7 +53,7 @@ window.onresize = function() {
     let newChartSize = checkChartSize();
     if (chartSize !== newChartSize) {
         chartSize = newChartSize;
-        resizeChart();
+        remakeChart();
     }
 }
 
@@ -71,7 +67,7 @@ function checkChartSize() {
     }
 }
 
-function resizeChart() {
+function remakeChart() {
 
     // Remove existing chart
     $("#chart-body svg").remove();
@@ -81,6 +77,9 @@ function resizeChart() {
 
     // Append the chart to the page
     $("#chart-body").append(newSvg);
+
+    // If any forecasts are actively selected, highlight them
+    highlightSelectedForecasts();
 
 }
 
@@ -112,7 +111,18 @@ function buildChart(data) {
 
     // Domain (min, max values) of the data along each axis
     const domainX = [parseTime("8/1/2024"), parseTime("11/5/2024")];
-    const domainY = [-50, 50];
+    let domainY;
+
+    // Set Y domain based on data source
+    if (selectedData === "harris-pct") {
+        domainY = [20, 80];
+    } else if (selectedData === "trump-pct") {
+        domainY = [20, 80];
+    } else if (selectedData === "harris-margin") {
+        domainY = [-50, 50];
+    } else if (selectedData === "trump-margin") {
+        domainY = [-50, 50];
+    }
 
     // Range (min, max chart position in px) for each axis
     const rangeX = [paddingLeft, width-paddingRight];
@@ -160,88 +170,108 @@ function buildChart(data) {
     // ----- FORECAST DATA ------ //
 
     // Filter data to exclude everything outside chart date range
-    data = data.filter(d => d["Date"] >= domainX[0] && d["Date"] <= domainX[1]);
+    data = data.filter(d => d["date"] >= domainX[0] && d["date"] <= domainX[1]);
 
     // FiveThirtyEight
-    let lineFiveThirtyEight = d3.line()
-        .x(d => xScale(d["Date"]))
-        .y(d => yScale(d["FiveThirtyEight"]))
-        .defined(d => d["FiveThirtyEight"] !== "-");
+    let line538 = d3.line()
+        .x(d => xScale(d["date"]))
+        .y(d => yScale(d["538-" + selectedData]))
+        .defined(d => d["538-" + selectedData] !== "-")
+        .curve(d3.curveBasis);
 
-    // Averages scaled to reach CSU modeled value for full season
-    let lineSilverBulletin = d3.line()
-        .x(d => xScale(d["Date"]))
-        .y(d => yScale(d["Silver-Bulletin"]))
-        .defined(d => d["Silver-Bulletin"] !== "-");
+    // Silver Bulletin
+    let lineSB = d3.line()
+        .x(d => xScale(d["date"]))
+        .y(d => yScale(d["sb-" + selectedData]))
+        .defined(d => d["sb-" + selectedData] !== "-")
+        .curve(d3.curveBasis);
 
-    // Averages scaled to reach CSU modeled value for full season
-    let lineTheEconomist = d3.line()
-        .x(d => xScale(d["Date"]))
-        .y(d => yScale(d["The-Economist"]))
-        .defined(d => d["The-Economist"] !== "-");
+    // Economist
+    let lineEcon = d3.line()
+        .x(d => xScale(d["date"]))
+        .y(d => yScale(d["econ-" + selectedData]))
+        .defined(d => d["econ-" + selectedData] !== "-")
+        .curve(d3.curveBasis);
 
-    // Averages scaled to reach CSU modeled value for full season
-    let lineSplitTicket = d3.line()
-        .x(d => xScale(d["Date"]))
-        .y(d => yScale(d["Split-Ticket"]))
-        .defined(d => d["Split-Ticket"] !== "-");
+    // Split Ticket
+    let lineST = d3.line()
+        .x(d => xScale(d["date"]))
+        .y(d => yScale(d["st-"+ selectedData]))
+        .defined(d => d["st-" + selectedData] !== "-")
+        .curve(d3.curveBasis);
 
-    // Averages scaled to reach CSU modeled value for full season
-    let linePolymarket = d3.line()
-        .x(d => xScale(d["Date"]))
-        .y(d => yScale(d["Polymarket"]))
-        .defined(d => d["Polymarket"] !== "-");
+    // Polymarket
+    let linePoly = d3.line()
+        .x(d => xScale(d["date"]))
+        .y(d => yScale(d["poly-" + selectedData]))
+        .defined(d => d["poly-" + selectedData] !== "-")
+        .curve(d3.curveBasis);
 
-    // Averages scaled to reach CSU modeled value for full season
-    let lineManifold = d3.line()
-        .x(d => xScale(d["Date"]))
-        .y(d => yScale(d["Manifold"]))
-        .defined(d => d["Manifold"] !== "-");
-
+    // Mani
+    let lineMani = d3.line()
+        .x(d => xScale(d["date"]))
+        .y(d => yScale(d["mani-" + selectedData]))
+        .defined(d => d["mani-" + selectedData] !== "-")
+        .curve(d3.curveBasis);
+    
     // Draw each path
 
     svg.append("path")
-        .attr("d", lineFiveThirtyEight(data))
+        .attr("d", line538(data))
         .classed("chart-data", true)
-        .attr("id", "chart-data-fivethirtyeight")
+        .attr("id", "chart-data-538")
 
     svg.append("path")
-        .attr("d", lineSilverBulletin(data))
+        .attr("d", lineSB(data))
         .classed("chart-data", true)
-        .attr("id", "chart-data-silver-bulletin")
+        .attr("id", "chart-data-sb")
 
     svg.append("path")
-        .attr("d", lineTheEconomist(data))
+        .attr("d", lineEcon(data))
         .classed("chart-data", true)
-        .attr("id", "chart-data-the-economist")
+        .attr("id", "chart-data-econ")
 
     svg.append("path")
-        .attr("d", lineSplitTicket(data))
+        .attr("d", lineST(data))
         .classed("chart-data", true)
-        .attr("id", "chart-data-split-ticket")
+        .attr("id", "chart-data-st")
 
     svg.append("path")
-        .attr("d", linePolymarket(data))
+        .attr("d", linePoly(data))
         .classed("chart-data", true)
-        .attr("id", "chart-data-polymarket")
+        .attr("id", "chart-data-poly")
 
     svg.append("path")
-        .attr("d", lineManifold(data))
+        .attr("d", lineMani(data))
         .classed("chart-data", true)
-        .attr("id", "chart-data-manifold")
+        .attr("id", "chart-data-mani")
+
+
+    // ----- MARKERS / LABELS ----- //
+
+    // 50% line (for % plots) / 0% line (for margin plots)
+    let midpoint = (selectedData === "harris-pct" || selectedData === "trump-pct") ? 50 : 0;
+    svg.append("g")
+        .append("line")
+        .attr("x1", xScale(domainX[0]))
+        .attr("y1", yScale(midpoint))
+        .attr("x2", xScale(domainX[1]))
+        .attr("y2", yScale(midpoint))
+        .attr("id", "chart-data-y-midpoint");
+
 
     // ----- INTERACTIVE ELEMENTS ----- //
 
     // Get latest forecast value for each forecast source
     let latestData = data[data.length - 1];
-    $("#tooltip-text-val-fivethirtyeight").text(latestData["FiveThirtyEight"]);
-    $("#tooltip-text-val-silver-bulletin").text(latestData["Silver-Bulletin"]);
-    $("#tooltip-text-val-the-economist").text(latestData["The-Economist"]);
-    $("#tooltip-text-val-split-ticket").text(latestData["Split-Ticket"]);
-    $("#tooltip-text-val-polymarket").text(latestData["Polymarket"]);
-    $("#tooltip-text-val-manifold").text(latestData["Manifold"]);
+    $("#tooltip-text-val-538").text(latestData["538-" + selectedData]);
+    $("#tooltip-text-val-sb").text(latestData["sb-" + selectedData]);
+    $("#tooltip-text-val-econ").text(latestData["econ-" + selectedData]);
+    $("#tooltip-text-val-st").text(latestData["st-" + selectedData]);
+    $("#tooltip-text-val-poly").text(latestData["poly-" + selectedData]);
+    $("#tooltip-text-val-mani").text(latestData["mani-" + selectedData]);
 
-    let latestDate = latestData["Date"];
+    let latestDate = latestData["date"];
     const selectedDateLine = svg.append("g")
         .append("line")
         .attr("x1", xScale(latestDate))
@@ -296,7 +326,7 @@ function buildChart(data) {
             let dataForDate = undefined;
             data.some(d => {
                 dataForDate = d;
-                return d.Date.getMonth() === cursorMonth && d.Date.getDate() === cursorDay;
+                return d["date"].getMonth() === cursorMonth && d["date"].getDate() === cursorDay;
             });
 
             // Update the tooltip box
@@ -306,12 +336,12 @@ function buildChart(data) {
                 day: "numeric"
             }));
 
-            $("#tooltip-text-val-fivethirtyeight").text(dataForDate["FiveThirtyEight"] + "%");
-            $("#tooltip-text-val-silver-bulletin").text(dataForDate["Silver-Bulletin"] + "%");
-            $("#tooltip-text-val-the-economist").text(dataForDate["The-Economist"] + "%");
-            $("#tooltip-text-val-split-ticket").text(dataForDate["Split-Ticket"] + "%");
-            $("#tooltip-text-val-polymarket").text(dataForDate["Polymarket"] + "%");
-            $("#tooltip-text-val-manifold").text(dataForDate["Manifold"] + "%");
+            $("#tooltip-text-val-538").text(dataForDate["538-" + selectedData] + "%");
+            $("#tooltip-text-val-sb").text(dataForDate["sb-" + selectedData] + "%");
+            $("#tooltip-text-val-econ").text(dataForDate["econ-" + selectedData] + "%");
+            $("#tooltip-text-val-st").text(dataForDate["st-" + selectedData] + "%");
+            $("#tooltip-text-val-poly").text(dataForDate["poly-" + selectedData] + "%");
+            $("#tooltip-text-val-mani").text(dataForDate["mani-" + selectedData] + "%");
 
         }
 
@@ -330,18 +360,18 @@ function clickForecastLabel(e) {
     let newSelection;
 
     // Get the forecast that was clicked on
-    if ($(e.currentTarget).hasClass("fivethirtyeight")){
-        newSelection = "fivethirtyeight";
-    } else if ($(e.currentTarget).hasClass("silver-bulletin")){
-        newSelection = "silver-bulletin";
-    } else if ($(e.currentTarget).hasClass("the-economist")) {
-        newSelection = "the-economist";
-    } else if ($(e.currentTarget).hasClass("split-ticket")) {
-        newSelection = "split-ticket";
-    } else if ($(e.currentTarget).hasClass("polymarket")) {
-        newSelection = "polymarket";
-    } else if ($(e.currentTarget).hasClass("manifold")) {
-        newSelection = "manifold";
+    if ($(e.currentTarget).hasClass("538")){
+        newSelection = "538";
+    } else if ($(e.currentTarget).hasClass("sb")){
+        newSelection = "sb";
+    } else if ($(e.currentTarget).hasClass("econ")) {
+        newSelection = "econ";
+    } else if ($(e.currentTarget).hasClass("st")) {
+        newSelection = "st";
+    } else if ($(e.currentTarget).hasClass("poly")) {
+        newSelection = "poly";
+    } else if ($(e.currentTarget).hasClass("mani")) {
+        newSelection = "mani";
     } else {
         newSelection = "none";
     }
@@ -362,6 +392,13 @@ function clickForecastLabel(e) {
     }
 
     // Update series highlighting
+    highlightSelectedForecasts();
+
+}
+
+
+function highlightSelectedForecasts() {
+
     if (selectedForecasts.length === 0) {
         $(".chart-data").removeClass("chart-data-foregrounded")
             .removeClass("chart-data-backgrounded");
@@ -376,7 +413,37 @@ function clickForecastLabel(e) {
 }
 
 
-function addToolTipHtml() {
+function clickDataSelectButton(e) {
+
+    let prevSelectedData = selectedData;
+
+    // Determine which button was pressed
+    if ($(e.currentTarget).hasClass("harris-pct")) {
+        selectedData = "harris-pct";
+    } else if ($(e.currentTarget).hasClass("trump-pct")) {
+        selectedData = "trump-pct";
+    } else if ($(e.currentTarget).hasClass("harris-margin")) {
+        selectedData = "harris-margin";
+    } else if ($(e.currentTarget).hasClass("trump-margin")) {
+        selectedData = "trump-margin";
+    }
+
+    // If already selected button is pressed, do nothing
+    if (prevSelectedData === selectedData) {
+        return;
+    }
+
+    // Update selector button styling
+    $(".data-select-button").removeClass("selected");
+    $(e.currentTarget).addClass("selected");
+
+    // Update plot to show selected data
+    remakeChart();
+
+}
+
+
+function overlayToolTip() {
 
     $("#chart-body").append(
         `
@@ -384,35 +451,54 @@ function addToolTipHtml() {
         <div id="tooltip-box">
             <h3 id="tooltip-date"></h3>
 
-            <div class="tooltip-row fivethirtyeight">
-                <div class="tooltip-icon" id="tooltip-icon-fivethirtyeight"></div>
-                <p class="tooltip-text"><span class="tooltip-text-label">FiveThirtyEight:</span> <span id="tooltip-text-val-fivethirtyeight">-</span></p>
+            <div class="tooltip-row 538">
+                <div class="tooltip-icon" id="tooltip-icon-538"></div>
+                <p class="tooltip-text"><span class="tooltip-text-label">FiveThirtyEight:</span> <span id="tooltip-text-val-538">-</span></p>
             </div>
 
-            <div class="tooltip-row silver-bulletin">
-                <div class="tooltip-icon" id="tooltip-icon-silver-bulletin"></div>
-                <p class="tooltip-text"><span class="tooltip-text-label">Silver Bulletin:</span> <span id="tooltip-text-val-silver-bulletin">-</span></p>
+            <div class="tooltip-row sb">
+                <div class="tooltip-icon" id="tooltip-icon-sb"></div>
+                <p class="tooltip-text"><span class="tooltip-text-label">Silver Bulletin:</span> <span id="tooltip-text-val-sb">-</span></p>
             </div>
 
-            <div class="tooltip-row the-economist">
-                <div class="tooltip-icon" id="tooltip-icon-the-economist"></div>
-                <p class="tooltip-text"><span class="tooltip-text-label">The Economist:</span> <span id="tooltip-text-val-the-economist">-</span></p>
+            <div class="tooltip-row econ">
+                <div class="tooltip-icon" id="tooltip-icon-econ"></div>
+                <p class="tooltip-text"><span class="tooltip-text-label">The Economist:</span> <span id="tooltip-text-val-econ">-</span></p>
             </div>
 
-            <div class="tooltip-row split-ticket">
-                <div class="tooltip-icon" id="tooltip-icon-split-ticket"></div>
-                <p class="tooltip-text"><span class="tooltip-text-label">Split Ticket:</span> <span id="tooltip-text-val-split-ticket">-</span></p>
+            <div class="tooltip-row st">
+                <div class="tooltip-icon" id="tooltip-icon-st"></div>
+                <p class="tooltip-text"><span class="tooltip-text-label">Split Ticket:</span> <span id="tooltip-text-val-st">-</span></p>
             </div>
 
-            <div class="tooltip-row polymarket">
-                <div class="tooltip-icon" id="tooltip-icon-polymarket"></div>
-                <p class="tooltip-text"><span class="tooltip-text-label">Polymarket:</span> <span id="tooltip-text-val-polymarket">-</span></p>
+            <div class="tooltip-row poly">
+                <div class="tooltip-icon" id="tooltip-icon-poly"></div>
+                <p class="tooltip-text"><span class="tooltip-text-label">Polymarket:</span> <span id="tooltip-text-val-poly">-</span></p>
             </div>
             
-            <div class="tooltip-row manifold">
-                <div class="tooltip-icon" id="tooltip-icon-manifold"></div>
-                <p class="tooltip-text"><span class="tooltip-text-label">Manifold:</span> <span id="tooltip-text-val-manifold">-</span></p>
+            <div class="tooltip-row mani">
+                <div class="tooltip-icon" id="tooltip-icon-mani"></div>
+                <p class="tooltip-text"><span class="tooltip-text-label">Manifold:</span> <span id="tooltip-text-val-mani">-</span></p>
             </div>
+
+        </div>
+        `
+    )
+
+}
+
+
+function overlayDataSelect() {
+
+    $("#chart-body").append(
+        `
+        <!-- Tooltip box, overlayed on chart SVG -->
+        <div id="data-select-wrapper">
+            
+            <div class="data-select-button harris-pct selected">Harris %</div>
+            <div class="data-select-button trump-pct" >Trump %</div>
+            <div class="data-select-button harris-margin">Harris Margin</div>
+            <div class="data-select-button trump-margin">Trump Margin</div>
 
         </div>
         `

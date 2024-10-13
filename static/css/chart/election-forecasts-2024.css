@@ -1,15 +1,15 @@
 
 
 .tick-y-cross {
-    stroke: lightgray;
+    stroke: rgb(230,230,230);
 }
 
 .tick text {
-    font-size: 1.2rem;
+    font-size: 1.0rem;
 }
 
 .y-axis-label {
-    font-size: 1.2rem;
+    font-size: 1.0rem;
 }
 
 .chart-data {
@@ -17,28 +17,33 @@
     stroke-width: 1px;
 }
 
-#chart-data-fivethirtyeight {
+#chart-data-538 {
     stroke: #ff6c07;
 }
 
-#chart-data-silver-bulletin {
+#chart-data-sb {
     stroke: #0fad0f;
 }
 
-#chart-data-the-economist {
+#chart-data-econ {
     stroke: #ff0000;
 }
 
-#chart-data-split-ticket {
+#chart-data-st {
     stroke: #8005a6;
 }
 
-#chart-data-polymarket {
+#chart-data-poly {
     stroke: #1725ee;
 }
 
-#chart-data-manifold {
+#chart-data-mani {
     stroke: #6d29d8;
+}
+
+#chart-data-y-midpoint {
+    stroke: rgb(150,150,150);
+    stroke-dasharray: 4px 3px;
 }
 
 .chart-data-backgrounded {
@@ -88,27 +93,27 @@
     margin-left: 3px;
 }
 
-#tooltip-icon-fivethirtyeight {
+#tooltip-icon-538 {
     border-bottom: 2px solid #ff6c07;
 }
 
-#tooltip-icon-silver-bulletin {
+#tooltip-icon-sb {
     border-bottom: 2px solid #0fad0f;
 }
 
-#tooltip-icon-the-economist {
+#tooltip-icon-econ {
     border-bottom: 2px solid #ff0000;
 }
 
-#tooltip-icon-split-ticket {
+#tooltip-icon-st{
     border-bottom: 2px solid #8005a6;
 }
 
-#tooltip-icon-polymarket {
+#tooltip-icon-poly{
     border-bottom: 2px solid #1725ee;
 }
 
-#tooltip-icon-manifold {
+#tooltip-icon-mani {
     border-bottom: 2px solid #6d29d8;
 }
 
@@ -125,6 +130,43 @@
 .tooltip-text-label {
     display: inline-block;
     width: 70px;
+}
+
+#data-select-wrapper {
+    padding: 6px;
+    position: absolute;
+    bottom: 30px;
+    left: 45px;
+    background: white;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.data-select-button {
+    border: 1px solid black;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    width: 85px;
+    height: 15px;
+    margin: 2px 0;
+    background: white;
+    cursor: pointer;
+}
+
+.data-select-button:hover {
+    background: rgb(240,240,240);
+}
+
+.data-select-button.selected {
+    background: black;
+    color: white;
 }
 
 
