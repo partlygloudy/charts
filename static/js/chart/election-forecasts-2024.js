@@ -401,9 +401,10 @@ function clickForecastLabel(e) {
 
 function highlightSelectedForecasts() {
 
+    $(".chart-data").removeClass("chart-data-foregrounded");
+
     if (selectedForecasts.length === 0) {
-        $(".chart-data").removeClass("chart-data-foregrounded")
-            .removeClass("chart-data-backgrounded");
+        $(".chart-data").removeClass("chart-data-backgrounded");
     } else {
         $(".chart-data").addClass("chart-data-backgrounded");
         for (let forecast of selectedForecasts) {
