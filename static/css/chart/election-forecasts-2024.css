@@ -30,7 +30,7 @@
 }
 
 #chart-data-st {
-    stroke: #8005a6;
+    stroke: #cb55ef;
 }
 
 #chart-data-poly {
@@ -38,12 +38,23 @@
 }
 
 #chart-data-mani {
-    stroke: #6d29d8;
+    stroke: #6f27c7;
+}
+
+#chart-data-pi {
+    stroke: #269ecb;
+}
+
+#chart-data-538-2016 {
+    stroke: #966464;
+    stroke-dasharray: 5px 3px;
+    visibility: hidden;
 }
 
 #chart-data-538-2020 {
-    stroke: #646464;
+    stroke: #646496;
     stroke-dasharray: 5px 3px;
+    visibility: hidden;
 }
 
 #chart-data-y-midpoint {
@@ -69,14 +80,28 @@
     fill: rgb(247 247 247 / 80%);
 }
 
-#tooltip-box {
-    padding: 6px;
+#tooltip-wrapper {
     position: absolute;
     bottom: 30px;
     right: 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: end;
+    justify-content: center;
+    font-family: Arial, sans-serif;
+}
+
+#tooltip-prev-years {
+    margin: 0 15px 7px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+}
+
+#tooltip-box {
     background: white;
     border: 1px solid rgb(100, 100, 100);
-    font-family: Arial, sans-serif;
+    padding: 6px;
 }
 
 .tooltip-row {
@@ -91,15 +116,15 @@
     background-color: rgb(220,220,220);
 }
 
-#tooltip-row-2020 {
-    cursor: unset;
+.tooltip-row-past.hidden {
+    color: rgb(200,200,200);
 }
 
 .tooltip-row:hover {
     background-color: rgb(240,240,240);
 }
 
-#tooltip-row-2020:hover {
+#tooltip-row-past:hover {
     background-color: unset;
 }
 
@@ -127,7 +152,7 @@
 }
 
 #tooltip-icon-st{
-    border-bottom: 2px solid #8005a6;
+    border-bottom: 2px solid #cb55ef;
 }
 
 #tooltip-icon-poly{
@@ -135,11 +160,29 @@
 }
 
 #tooltip-icon-mani {
-    border-bottom: 2px solid #6d29d8;
+    border-bottom: 2px solid #6f27c7;
+}
+
+#tooltip-icon-pi {
+    border-bottom: 2px solid #269ecb;
+}
+
+#tooltip-icon-538-2016 {
+    border-bottom: 2px dashed #966464;
 }
 
 #tooltip-icon-538-2020 {
-    border-bottom: 2px dashed #646464;
+    border-bottom: 2px dashed #646496;
+}
+
+#tooltip-icon-538-2016.hidden {
+    border-bottom: none;
+    width: 0;
+}
+
+#tooltip-icon-538-2020.hidden {
+    border-bottom: none;
+    width: 0;
 }
 
 #tooltip-date {
@@ -154,7 +197,11 @@
 
 .tooltip-text-label {
     display: inline-block;
-    width: 70px;
+    width: 75px;
+}
+
+.tooltip-text-label-past {
+    width: 55px;
 }
 
 #data-select-wrapper {
@@ -227,7 +274,11 @@
     }
 
     .tooltip-text-label {
-        width: 60px;
+        width: 65px;
+    }
+
+    .tooltip-text-label-past {
+        width: 45px;
     }
 
     #data-select-wrapper {

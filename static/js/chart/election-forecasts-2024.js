@@ -10,6 +10,9 @@ let selectedCandidate = "harris";
 let selectedMetric = "pct"
 let selectedData = "harris-pct";
 let selected2020Data = "biden-2020-pct";
+let selected2016Data = "clinton-2016-pct";
+let is2016Active = false;
+let is2020Active = false;
 
 // Run on page load
 $(document).ready(function() {
@@ -210,11 +213,18 @@ function buildChart(data) {
         .defined(d => d["poly-" + selectedData] !== "-")
         .curve(d3.curveBasis);
 
-    // Mani
+    // Manifold
     let lineMani = d3.line()
         .x(d => xScale(d["date"]))
         .y(d => yScale(d["mani-" + selectedData]))
         .defined(d => d["mani-" + selectedData] !== "-")
+        .curve(d3.curveBasis);
+
+    // PredictIt
+    let linePI = d3.line()
+        .x(d => xScale(d["date"]))
+        .y(d => yScale(d["pi-" + selectedData]))
+        .defined(d => d["pi-" + selectedData] !== "-")
         .curve(d3.curveBasis);
 
     // 538 (2020)
@@ -222,6 +232,13 @@ function buildChart(data) {
         .x(d => xScale(d["date"]))
         .y(d => yScale(d[selected2020Data]))
         .defined(d => d[selected2020Data] !== "-")
+        .curve(d3.curveBasis);
+
+    // 538 (2016)
+    let line538_2016 = d3.line()
+        .x(d => xScale(d["date"]))
+        .y(d => yScale(d[selected2016Data]))
+        .defined(d => d[selected2016Data] !== "-")
         .curve(d3.curveBasis);
     
     // Draw each path
@@ -257,9 +274,19 @@ function buildChart(data) {
         .attr("id", "chart-data-mani")
 
     svg.append("path")
+        .attr("d", linePI(data))
+        .classed("chart-data", true)
+        .attr("id", "chart-data-pi")
+
+    svg.append("path")
         .attr("d", line538_2020(data))
         .classed("chart-data", true)
         .attr("id", "chart-data-538-2020")
+
+    svg.append("path")
+        .attr("d", line538_2016(data))
+        .classed("chart-data", true)
+        .attr("id", "chart-data-538-2016")
 
 
     // ----- MARKERS / LABELS ----- //
@@ -290,7 +317,9 @@ function buildChart(data) {
     $("#tooltip-text-val-st").text(latestData["st-" + selectedData]);
     $("#tooltip-text-val-poly").text(latestData["poly-" + selectedData]);
     $("#tooltip-text-val-mani").text(latestData["mani-" + selectedData]);
+    $("#tooltip-text-val-pi").text(latestData["pi-" + selectedData]);
     $("#tooltip-text-val-538-2020").text(latestData[selected2020Data]);
+    $("#tooltip-text-val-538-2016").text(latestData[selected2016Data]);
 
     let latestDate = latestData["date"];
     const selectedDateLine = svg.append("g")
@@ -363,7 +392,9 @@ function buildChart(data) {
             $("#tooltip-text-val-st").text(dataForDate["st-" + selectedData] + "%");
             $("#tooltip-text-val-poly").text(dataForDate["poly-" + selectedData] + "%");
             $("#tooltip-text-val-mani").text(dataForDate["mani-" + selectedData] + "%");
+            $("#tooltip-text-val-pi").text(dataForDate["pi-" + selectedData] + "%");
             $("#tooltip-text-val-538-2020").text(dataForDate[selected2020Data] + "%");
+            $("#tooltip-text-val-538-2016").text(dataForDate[selected2016Data] + "%");
 
         }
 
@@ -394,6 +425,12 @@ function clickForecastLabel(e) {
         newSelection = "poly";
     } else if ($(e.currentTarget).hasClass("mani")) {
         newSelection = "mani";
+    } else if ($(e.currentTarget).hasClass("pi")) {
+        newSelection = "pi";
+    } else if ($(e.currentTarget).hasClass("538-2016")) {
+        newSelection = "538-2016";
+    } else if ($(e.currentTarget).hasClass("538-2020")) {
+        newSelection = "538-2020";
     } else {
         newSelection = "none";
     }
@@ -401,14 +438,23 @@ function clickForecastLabel(e) {
     // Add / remove it from the list of selected forecasts
     if (newSelection !== "none") {
 
-        // If not already selected, add new selection
-        if (!selectedForecasts.includes(newSelection)) {
-            selectedForecasts.push(newSelection);
-        }
+        // Handle clicks on past year labels
+        if (newSelection === "538-2016") {
+            is2016Active = !is2016Active;
+        } else if (newSelection === "538-2020") {
+            is2020Active = !is2020Active;
+        } else {
 
-        // Else remove selection
-        else {
-            selectedForecasts = selectedForecasts.filter(f => f !== newSelection);
+            // If not already selected, add new selection
+            if (!selectedForecasts.includes(newSelection)) {
+                selectedForecasts.push(newSelection);
+            }
+
+            // Else remove selection
+            else {
+                selectedForecasts = selectedForecasts.filter(f => f !== newSelection);
+            }
+
         }
 
     }
@@ -435,6 +481,27 @@ function highlightSelectedForecasts() {
         }
     }
 
+    // Handle prev year reference line visibility
+    if (is2016Active) {
+        $("#chart-data-538-2016").css("visibility", "visible");
+        $("#tooltip-row-2016").removeClass("hidden");
+        $("#tooltip-icon-538-2016").removeClass("hidden");
+    } else {
+        $("#chart-data-538-2016").css("visibility", "hidden");
+        $("#tooltip-row-2016").addClass("hidden");
+        $("#tooltip-icon-538-2016").addClass("hidden");
+    }
+
+    if (is2020Active) {
+        $("#chart-data-538-2020").css("visibility", "visible");
+        $("#tooltip-row-2020").removeClass("hidden");
+        $("#tooltip-icon-538-2020").removeClass("hidden");
+    } else {
+        $("#chart-data-538-2020").css("visibility", "hidden");
+        $("#tooltip-row-2020").addClass("hidden");
+        $("#tooltip-icon-538-2020").addClass("hidden");
+    }
+
 }
 
 
@@ -455,6 +522,7 @@ function clickDataSelectButton(e) {
 
     selectedData = selectedCandidate + "-" + selectedMetric;
     selected2020Data = selectedCandidate === "harris" ? "biden-2020-" + selectedMetric : "trump-2020-" + selectedMetric
+    selected2016Data = selectedCandidate === "harris" ? "clinton-2016-" + selectedMetric : "trump-2016-" + selectedMetric
 
     // If already selected button is pressed, do nothing
     if (prevSelectedData === selectedData) {
@@ -487,44 +555,63 @@ function overlayToolTip() {
     $("#chart-body").append(
         `
         <!-- Tooltip box, overlayed on chart SVG -->
-        <div id="tooltip-box">
-            <h3 id="tooltip-date"></h3>
-
-            <div class="tooltip-row 538">
-                <div class="tooltip-icon" id="tooltip-icon-538"></div>
-                <p class="tooltip-text"><span class="tooltip-text-label">538:</span> <span id="tooltip-text-val-538">-</span></p>
+        
+        <div id="tooltip-wrapper">
+        
+            <div id="tooltip-prev-years">
+            
+                <div class="tooltip-row tooltip-row-past 538-2016 hidden" id="tooltip-row-2016">
+                    <div class="tooltip-icon hidden" id="tooltip-icon-538-2016"></div>
+                    <p class="tooltip-text"><span class="tooltip-text-label tooltip-text-label-past">538 (2016):</span> <span id="tooltip-text-val-538-2016">-</span></p>
+                </div>
+                
+                <div class="tooltip-row tooltip-row-past 538-2020 hidden" id="tooltip-row-2020">
+                    <div class="tooltip-icon hidden" id="tooltip-icon-538-2020"></div>
+                    <p class="tooltip-text"><span class="tooltip-text-label tooltip-text-label-past">538 (2020):</span> <span id="tooltip-text-val-538-2020">-</span></p>
+                </div>
+                
             </div>
-
-            <div class="tooltip-row sb">
-                <div class="tooltip-icon" id="tooltip-icon-sb"></div>
-                <p class="tooltip-text"><span class="tooltip-text-label">Silver Bulletin:</span> <span id="tooltip-text-val-sb">-</span></p>
-            </div>
-
-            <div class="tooltip-row econ">
-                <div class="tooltip-icon" id="tooltip-icon-econ"></div>
-                <p class="tooltip-text"><span class="tooltip-text-label">The Economist:</span> <span id="tooltip-text-val-econ">-</span></p>
-            </div>
-
-            <div class="tooltip-row st">
-                <div class="tooltip-icon" id="tooltip-icon-st"></div>
-                <p class="tooltip-text"><span class="tooltip-text-label">Split Ticket:</span> <span id="tooltip-text-val-st">-</span></p>
-            </div>
-
-            <div class="tooltip-row poly">
-                <div class="tooltip-icon" id="tooltip-icon-poly"></div>
-                <p class="tooltip-text"><span class="tooltip-text-label">Polymarket:</span> <span id="tooltip-text-val-poly">-</span></p>
+        
+            <div id="tooltip-box">
+                <h3 id="tooltip-date"></h3>
+    
+                <div class="tooltip-row 538">
+                    <div class="tooltip-icon" id="tooltip-icon-538"></div>
+                    <p class="tooltip-text"><span class="tooltip-text-label">538:</span> <span id="tooltip-text-val-538">-</span></p>
+                </div>
+    
+                <div class="tooltip-row sb">
+                    <div class="tooltip-icon" id="tooltip-icon-sb"></div>
+                    <p class="tooltip-text"><span class="tooltip-text-label">Silver Bulletin*:</span> <span id="tooltip-text-val-sb">-</span></p>
+                </div>
+    
+                <div class="tooltip-row econ">
+                    <div class="tooltip-icon" id="tooltip-icon-econ"></div>
+                    <p class="tooltip-text"><span class="tooltip-text-label">The Economist*:</span> <span id="tooltip-text-val-econ">-</span></p>
+                </div>
+    
+                <div class="tooltip-row st">
+                    <div class="tooltip-icon" id="tooltip-icon-st"></div>
+                    <p class="tooltip-text"><span class="tooltip-text-label">Split Ticket:</span> <span id="tooltip-text-val-st">-</span></p>
+                </div>
+    
+                <div class="tooltip-row poly">
+                    <div class="tooltip-icon" id="tooltip-icon-poly"></div>
+                    <p class="tooltip-text"><span class="tooltip-text-label">Polymarket:</span> <span id="tooltip-text-val-poly">-</span></p>
+                </div>
+                
+                <div class="tooltip-row mani">
+                    <div class="tooltip-icon" id="tooltip-icon-mani"></div>
+                    <p class="tooltip-text"><span class="tooltip-text-label">Manifold:</span> <span id="tooltip-text-val-mani">-</span></p>
+                </div>
+                
+                <div class="tooltip-row pi">
+                    <div class="tooltip-icon" id="tooltip-icon-pi"></div>
+                    <p class="tooltip-text"><span class="tooltip-text-label">PredictIt**:</span> <span id="tooltip-text-val-pi">-</span></p>
+                </div>
+    
             </div>
             
-            <div class="tooltip-row mani">
-                <div class="tooltip-icon" id="tooltip-icon-mani"></div>
-                <p class="tooltip-text"><span class="tooltip-text-label">Manifold:</span> <span id="tooltip-text-val-mani">-</span></p>
-            </div>
-            
-            <div class="tooltip-row" id="tooltip-row-2020">
-                <div class="tooltip-icon" id="tooltip-icon-538-2020"></div>
-                <p class="tooltip-text"><span class="tooltip-text-label">538 (2020):</span> <span id="tooltip-text-val-538-2020">-</span></p>
-            </div>
-
         </div>
         `
     )
