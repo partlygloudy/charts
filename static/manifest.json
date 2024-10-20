@@ -25,7 +25,7 @@
       "chartSubtitle": "Win probabilities for Harris and Trump in the 2024 US presidential election, according to various forecasting models and prediction markets",
       "chartDescription": "This chart shows win probability forecasts for the 2024 US presidential election produced by election analysts, news organizations, and prediction markets. Click on one or more forecasts in the legend to highlight them.</p><p><em>*Forecasts from pay-walled sources omit the most recent week of data.</em></p><p><em>**Values are scaled to sum to 100 to account for price distortions caused by PredictIt's large fees</em></p>",
       "chartDataSource": "<a href='https://projects.fivethirtyeight.com/2024-election-forecast/' target='_blank'>FiveThirtyEight</a>, <a href='https://www.natesilver.net/p/nate-silver-2024-president-election-polls-model' target='_blank'>Silver Bulletin</a>, <a href='https://polymarket.com/event/presidential-election-winner-2024' target='_blank'>Polymarket</a>, <a href='https://manifold.markets/jack/who-will-win-the-2024-us-presidenti-8c1c8b2f8964' target='_blank'>Manifold</a>, <a href='https://www.economist.com/interactive/us-2024-election/prediction-model/president' target='_blank'>The Economist</a>, <a href='https://split-ticket.org/2024-presidential-ratings/' target='_blank'>Split Ticket</a>, <a href='https://www.predictit.org/markets/detail/7456/Who-will-win-the-2024-US-presidential-election' target='_blank'>PredictIt</a>",
-      "chartLastUpdate": "10/13/2024"
+      "chartLastUpdate": "10/20/2024"
     }
 
   }
